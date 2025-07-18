@@ -8,8 +8,19 @@ The attention mechanism is arguably one of the most impactful innovations in the
 
 To put that into perspective: the combined citation count of Darwin's 'On the Origin of Species', Hubel and Wiesel's seminal work on the visual system, and Chomsky's 'Syntactic Structures', a foundational text in linguistics, is still less than half of 'Attention Is All You Need'.
 
+I still remember the first time that I encountered attention few years ago, it was during the first class of my Master in Cognitive Sciences and AI. I must say that it has not been love at first sight, actually it was quite the opposite. I found the idea of Query, Key and Values confusing and it took me a while to really grasp the core idea behind the attention mechanisms and why it works so well.
 
-## The Core Idea of Attention
+With this blog I aim to give you the insights that helped me understanding attention so that you can start build it yourself. Thus, I will first explain the core idea of attention, the difference between other representations and then I will implement it from scratch using a PyTorch and Einsum (which is a very powerful library for linear algebra operations.)
+
+## The Core Idea of Attention and Why It Works
+
+The attention mechanisms core concept is fairly simple if expressed with words. If you have an input sequence $N$ and you want to know how each element of your sequence relates to another one you should compare the similarity between the two, then you can scale the value of each element in order to reflect its global relationships with the other elements. Basically, you are saying that the meaning of an element of your sequence is reflected by its similarity with the others.
+
+Now, this was actually the appropriate definition of 'Self-attention' as we are comparing the sequence with itself, there are other kinds of attention, but I believe that it's helpful to start with self attention first as it is more intuitive and it's the most used mechanism nowadays.
+
+
+### What does really change between attention and MLP?
+
 
 
 ## Implementation
@@ -28,5 +39,9 @@ import math
 
 
 ```{python}
+y = torch.randn((12, 10, 5))
 x = torch.randn((12, 10, 5))
+
+xy = torch.einsum('...ij, ...kj->ik', x, y)
+print(xy.shape)
 ```
