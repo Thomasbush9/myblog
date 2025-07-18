@@ -1,0 +1,26 @@
+project:
+  type: website
+
+website:
+  title: "Thomas W. Bush"
+  site-url: "https://github.com/Thomasbush9/myblog/"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: about.qmd
+        text: About
+    right:
+      - icon: github
+        href: https://github.com/thomasbush
+      - icon: file-person
+        href: cv.pdf  # add this file later
+format:
+  html:
+    theme:
+      - cosmo
+      - brand
+    css: styles.css
+
+
+

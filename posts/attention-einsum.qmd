@@ -1,0 +1,18 @@
+---
+title: "Understanding Attention with Einsum"
+date: 2025-07-17
+---
+# Attention Overview
+
+The goal of this post is to review the attentional mechanism and make it more understandable with the use of the Einstein notion for the matrix multiplication part.
+
+
+```{python}
+import torch
+import math
+```
+
+
+```{python}
+x = torch.randn((12, 10, 5))
+```

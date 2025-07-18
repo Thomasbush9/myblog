@@ -1,0 +1,12 @@
+{
+  "hash": "3bd9578989adb78a4124a4679d153f61",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Understanding Attention with Einsum\"\ndate: 2025-07-17\n---\n\n# Attention Overview\n\nThe goal of this post is to review the attentional mechanism and make it more understandable with the use of the Einstein notion for the matrix multiplication part.\n\n::: {#2818c2b0 .cell execution_count=1}\n``` {.python .cell-code}\nimport torch\nimport math\n```\n:::\n\n\n::: {#1f1ef890 .cell execution_count=2}\n``` {.python .cell-code}\nx = torch.randn((12, 10, 5))\n```\n:::\n\n\n",
+    "supporting": [
+      "attention-einsum_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
