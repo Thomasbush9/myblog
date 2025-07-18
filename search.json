@@ -1,37 +1,58 @@
 [
   {
-    "objectID": "posts/post-with-code/index.html",
-    "href": "posts/post-with-code/index.html",
-    "title": "Post With Code",
+    "objectID": "posts/attention-einsum/index.html",
+    "href": "posts/attention-einsum/index.html",
+    "title": "Understanding Attention with Einsum",
     "section": "",
-    "text": "This is a post with executable code."
+    "text": "The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based solely on attention mechanisms, has received over \\(185,000\\) citations.\nTo put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’."
   },
   {
-    "objectID": "posts/welcome/index.html",
-    "href": "posts/welcome/index.html",
-    "title": "Welcome To My Blog",
+    "objectID": "posts/attention-einsum/index.html#introduction",
+    "href": "posts/attention-einsum/index.html#introduction",
+    "title": "Understanding Attention with Einsum",
     "section": "",
-    "text": "This is the first post in a Quarto blog. Welcome!\n\nSince this post doesn’t specify an explicit image, the first image in the post will be used in the listing page of posts."
+    "text": "The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based solely on attention mechanisms, has received over \\(185,000\\) citations.\nTo put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’."
+  },
+  {
+    "objectID": "posts/attention-einsum/index.html#the-core-idea-of-attention",
+    "href": "posts/attention-einsum/index.html#the-core-idea-of-attention",
+    "title": "Understanding Attention with Einsum",
+    "section": "The Core Idea of Attention",
+    "text": "The Core Idea of Attention"
+  },
+  {
+    "objectID": "posts/attention-einsum/index.html#implementation",
+    "href": "posts/attention-einsum/index.html#implementation",
+    "title": "Understanding Attention with Einsum",
+    "section": "Implementation",
+    "text": "Implementation"
+  },
+  {
+    "objectID": "posts/attention-einsum/index.html#visualization",
+    "href": "posts/attention-einsum/index.html#visualization",
+    "title": "Understanding Attention with Einsum",
+    "section": "Visualization",
+    "text": "Visualization"
+  },
+  {
+    "objectID": "posts/attention-einsum/index.html#conclusion-and-suggested-material",
+    "href": "posts/attention-einsum/index.html#conclusion-and-suggested-material",
+    "title": "Understanding Attention with Einsum",
+    "section": "Conclusion and Suggested Material",
+    "text": "Conclusion and Suggested Material\n\nimport torch\nimport math\n\n\nx = torch.randn((12, 10, 5))"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "About Me",
     "section": "",
-    "text": "About this blog"
+    "text": "👋 Thomas Wyndham Bush\nStudent and Research Assistant in ML & Neuroscience\nI’m a researcher exploring the intersection of machine learning, computational neuroscience, and language. I build tools for analyzing behavior, neural data, and AI explainability.\nThis site collects my articles, experiments, and thoughts as I learn and build in the open."
   },
   {
     "objectID": "index.html",
     "href": "index.html",
     "title": "myblog",
     "section": "",
-    "text": "Understanding Attention with Einsum\n\n\n\n\n\n\n\n\nJul 17, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nPost With Code\n\n\n\nnews\n\ncode\n\nanalysis\n\n\n\n\n\n\n\n\n\nJul 17, 2025\n\n\nHarlow Malloc\n\n\n\n\n\n\n\n\n\n\n\n\nWelcome To My Blog\n\n\n\nnews\n\n\n\n\n\n\n\n\n\nJul 14, 2025\n\n\nTristan O’Malley\n\n\n\n\n\nNo matching items"
-  },
-  {
-    "objectID": "posts/attention-einsum.html",
-    "href": "posts/attention-einsum.html",
-    "title": "Understanding Attention with Einsum",
-    "section": "",
-    "text": "Attention Overview\nThe goal of this post is to review the attentional mechanism and make it more understandable with the use of the Einstein notion for the matrix multiplication part.\n\nimport torch\nimport math\n\n\nx = torch.randn((12, 10, 5))"
+    "text": "Understanding Attention with Einsum\n\n\n\n\n\n\n\n\nJul 17, 2025\n\n\n\n\n\nNo matching items"
   }
 ]
