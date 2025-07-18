@@ -24,6 +24,6 @@ format:
 publish:
   method: gh-pages
 resources:
-  - cv/**
+  - cv/ThomasBush_CV.pdf
 
 
