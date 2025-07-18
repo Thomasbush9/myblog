@@ -1,19 +1,36 @@
 ---
-title: "About"
+title: "About Me"
 image: profile.jpg
+format:
+  html:
+    page-layout: full
+    toc: false
+
 about:
   template: jolla
   links:
     - icon: twitter
       text: Twitter
-      href: https://twitter.com
+      href: https://x.com/thomasbush99
     - icon: linkedin
       text: LinkedIn
-      href: https://linkedin.com
+      href: https://www.linkedin.com/in/thomas-wyndham-bush-390635194/
     - icon: github
       text: Github
-      href: https://github.com
-
+      href: https://github.com/Thomasbush9
+    - icon: file
+      text: Download CV
+      href: cv/ThomasBush_CV.pdf
+    - icon: envelope
+      text: Email
+      href: mailto:thomasbush52@gmail.com
 ---
 
-About this blog
+# 👋 Thomas Wyndham Bush
+
+**Student and Research Assistant in ML & Neuroscience**
+
+I'm a researcher exploring the intersection of machine learning, computational neuroscience, and language. I build tools for analyzing behavior, neural data, and AI explainability.
+
+This site collects my articles, experiments, and thoughts as I learn and build in the open.
+

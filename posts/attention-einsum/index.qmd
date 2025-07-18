@@ -1,0 +1,32 @@
+---
+title: "Understanding Attention with Einsum"
+date: 2025-07-17
+---
+## Introduction
+
+The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper 'Attention Is All You Need', which introduced the transformer architecture based solely on attention mechanisms, has received over $185,000$ citations.
+
+To put that into perspective: the combined citation count of Darwin's 'On the Origin of Species', Hubel and Wiesel's seminal work on the visual system, and Chomsky's 'Syntactic Structures', a foundational text in linguistics, is still less than half of 'Attention Is All You Need'.
+
+
+## The Core Idea of Attention
+
+
+## Implementation
+
+
+## Visualization
+
+## Conclusion and Suggested Material
+
+
+
+```{python}
+import torch
+import math
+```
+
+
+```{python}
+x = torch.randn((12, 10, 5))
+```

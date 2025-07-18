@@ -1,0 +1,12 @@
+{
+  "hash": "cb092d797bc832c9e31d235f79e65f38",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: \"Understanding Attention with Einsum\"\ndate: 2025-07-17\n---\n\n## Introduction\n\nThe attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper 'Attention Is All You Need', which introduced the transformer architecture based solely on attention mechanisms, has received over $185,000$ citations.\n\nTo put that into perspective: the combined citation count of Darwin's 'On the Origin of Species', Hubel and Wiesel's seminal work on the visual system, and Chomsky's 'Syntactic Structures', a foundational text in linguistics, is still less than half of 'Attention Is All You Need'.\n\n\n## The Core Idea of Attention\n\n\n## Implementation\n\n\n## Visualization\n\n## Conclusion and Suggested Material\n\n::: {#fa19f9c7 .cell execution_count=1}\n``` {.python .cell-code}\nimport torch\nimport math\n```\n:::\n\n\n::: {#0d11cb90 .cell execution_count=2}\n``` {.python .cell-code}\nx = torch.randn((12, 10, 5))\n```\n:::\n\n\n",
+    "supporting": [
+      "index_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}
