@@ -21,6 +21,8 @@ format:
       - cosmo
       - brand
     css: styles.css
+publish:
+  method: gh-pages
 
 
 
