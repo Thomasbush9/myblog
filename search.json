@@ -1,5 +1,12 @@
 [
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
+    "section": "",
+    "text": "👋 Thomas Wyndham Bush\nStudent and Research Assistant in ML & Neuroscience\nI’m a researcher exploring the intersection of machine learning, computational neuroscience, and language. I build tools for analyzing behavior, neural data, and AI explainability.\nThis site collects my articles, experiments, and thoughts as I learn and build in the open."
+  },
+  {
     "objectID": "posts/attention-einsum/index.html",
     "href": "posts/attention-einsum/index.html",
     "title": "Understanding Attention with Einsum",
@@ -40,13 +47,6 @@
     "title": "Understanding Attention with Einsum",
     "section": "Conclusion and Suggested Material",
     "text": "Conclusion and Suggested Material\n\nimport torch\nimport math\n\n\nx = torch.randn((12, 10, 5))"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About Me",
-    "section": "",
-    "text": "👋 Thomas Wyndham Bush\nStudent and Research Assistant in ML & Neuroscience\nI’m a researcher exploring the intersection of machine learning, computational neuroscience, and language. I build tools for analyzing behavior, neural data, and AI explainability.\nThis site collects my articles, experiments, and thoughts as I learn and build in the open."
   },
   {
     "objectID": "index.html",
