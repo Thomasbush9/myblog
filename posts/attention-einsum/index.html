@@ -75,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-a986a95301e671fce2c6472dffc862a1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -219,9 +219,16 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
 <p>The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based solely on attention mechanisms, has received over <span class="math inline">\(185,000\)</span> citations.</p>
 <p>To put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’.</p>
+<p>I still remember the first time that I encountered attention few years ago, it was during the first class of my Master in Cognitive Sciences and AI. I must say that it has not been love at first sight, actually it was quite the opposite. I found the idea of Query, Key and Values confusing and it took me a while to really grasp the core idea behind the attention mechanisms and why it works so well.</p>
+<p>With this blog I aim to give you the insights that helped me understanding attention so that you can start build it yourself. Thus, I will first explain the core idea of attention, the difference between other representations and then I will implement it from scratch using a PyTorch and Einsum (which is a very powerful library for linear algebra operations.)</p>
 </section>
-<section id="the-core-idea-of-attention" class="level2">
-<h2 class="anchored" data-anchor-id="the-core-idea-of-attention">The Core Idea of Attention</h2>
+<section id="the-core-idea-of-attention-and-why-it-works" class="level2">
+<h2 class="anchored" data-anchor-id="the-core-idea-of-attention-and-why-it-works">The Core Idea of Attention and Why It Works</h2>
+<p>The attention mechanisms core concept is fairly simple if expressed with words. If you have an input sequence <span class="math inline">\(N\)</span> and you want to know how each element of your sequence relates to another one you should compare the similarity between the two, then you can scale the value of each element in order to reflect its global relationships with the other elements. Basically, you are saying that the meaning of an element of your sequence is reflected by its similarity with the others.</p>
+<p>Now, this was actually the appropriate definition of ‘Self-attention’ as we are comparing the sequence with itself, there are other kinds of attention, but I believe that it’s helpful to start with self attention first as it is more intuitive and it’s the most used mechanism nowadays.</p>
+<section id="what-does-really-change-between-attention-and-mlp" class="level3">
+<h3 class="anchored" data-anchor-id="what-does-really-change-between-attention-and-mlp">What does really change between attention and MLP?</h3>
+</section>
 </section>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
@@ -231,12 +238,19 @@ window.Quarto = {
 </section>
 <section id="conclusion-and-suggested-material" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion-and-suggested-material">Conclusion and Suggested Material</h2>
-<div id="fa19f9c7" class="cell" data-execution_count="1">
+<div id="e1b030da" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="0d11cb90" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">5</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="9d2afc16" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">5</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>xy <span class="op">=</span> torch.einsum(<span class="st">'...ij, ...kj-&gt;ik'</span>, x, y)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(xy.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>torch.Size([10, 10])</code></pre>
+</div>
 </div>
 
 

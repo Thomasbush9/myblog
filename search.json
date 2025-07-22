@@ -1,24 +1,31 @@
 [
   {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
+    "section": "",
+    "text": "👋 Thomas Wyndham Bush\nStudent and Research Assistant in ML & Neuroscience\nI’m a researcher exploring the intersection of machine learning, computational neuroscience, and language. I build tools for analyzing behavior, neural data, and AI explainability.\nThis site collects my articles, experiments, and thoughts as I learn and build in the open."
+  },
+  {
     "objectID": "posts/attention-einsum/index.html",
     "href": "posts/attention-einsum/index.html",
     "title": "Understanding Attention with Einsum",
     "section": "",
-    "text": "The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based solely on attention mechanisms, has received over \\(185,000\\) citations.\nTo put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’."
+    "text": "The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based solely on attention mechanisms, has received over \\(185,000\\) citations.\nTo put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’.\nI still remember the first time that I encountered attention few years ago, it was during the first class of my Master in Cognitive Sciences and AI. I must say that it has not been love at first sight, actually it was quite the opposite. I found the idea of Query, Key and Values confusing and it took me a while to really grasp the core idea behind the attention mechanisms and why it works so well.\nWith this blog I aim to give you the insights that helped me understanding attention so that you can start build it yourself. Thus, I will first explain the core idea of attention, the difference between other representations and then I will implement it from scratch using a PyTorch and Einsum (which is a very powerful library for linear algebra operations.)"
   },
   {
     "objectID": "posts/attention-einsum/index.html#introduction",
     "href": "posts/attention-einsum/index.html#introduction",
     "title": "Understanding Attention with Einsum",
     "section": "",
-    "text": "The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based solely on attention mechanisms, has received over \\(185,000\\) citations.\nTo put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’."
+    "text": "The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based solely on attention mechanisms, has received over \\(185,000\\) citations.\nTo put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’.\nI still remember the first time that I encountered attention few years ago, it was during the first class of my Master in Cognitive Sciences and AI. I must say that it has not been love at first sight, actually it was quite the opposite. I found the idea of Query, Key and Values confusing and it took me a while to really grasp the core idea behind the attention mechanisms and why it works so well.\nWith this blog I aim to give you the insights that helped me understanding attention so that you can start build it yourself. Thus, I will first explain the core idea of attention, the difference between other representations and then I will implement it from scratch using a PyTorch and Einsum (which is a very powerful library for linear algebra operations.)"
   },
   {
-    "objectID": "posts/attention-einsum/index.html#the-core-idea-of-attention",
-    "href": "posts/attention-einsum/index.html#the-core-idea-of-attention",
+    "objectID": "posts/attention-einsum/index.html#the-core-idea-of-attention-and-why-it-works",
+    "href": "posts/attention-einsum/index.html#the-core-idea-of-attention-and-why-it-works",
     "title": "Understanding Attention with Einsum",
-    "section": "The Core Idea of Attention",
-    "text": "The Core Idea of Attention"
+    "section": "The Core Idea of Attention and Why It Works",
+    "text": "The Core Idea of Attention and Why It Works\nThe attention mechanisms core concept is fairly simple if expressed with words. If you have an input sequence \\(N\\) and you want to know how each element of your sequence relates to another one you should compare the similarity between the two, then you can scale the value of each element in order to reflect its global relationships with the other elements. Basically, you are saying that the meaning of an element of your sequence is reflected by its similarity with the others.\nNow, this was actually the appropriate definition of ‘Self-attention’ as we are comparing the sequence with itself, there are other kinds of attention, but I believe that it’s helpful to start with self attention first as it is more intuitive and it’s the most used mechanism nowadays.\n\nWhat does really change between attention and MLP?"
   },
   {
     "objectID": "posts/attention-einsum/index.html#implementation",
@@ -39,14 +46,7 @@
     "href": "posts/attention-einsum/index.html#conclusion-and-suggested-material",
     "title": "Understanding Attention with Einsum",
     "section": "Conclusion and Suggested Material",
-    "text": "Conclusion and Suggested Material\n\nimport torch\nimport math\n\n\nx = torch.randn((12, 10, 5))"
-  },
-  {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About Me",
-    "section": "",
-    "text": "👋 Thomas Wyndham Bush\nStudent and Research Assistant in ML & Neuroscience\nI’m a researcher exploring the intersection of machine learning, computational neuroscience, and language. I build tools for analyzing behavior, neural data, and AI explainability.\nThis site collects my articles, experiments, and thoughts as I learn and build in the open."
+    "text": "Conclusion and Suggested Material\n\nimport torch\nimport math\n\n\ny = torch.randn((12, 10, 5))\nx = torch.randn((12, 10, 5))\n\nxy = torch.einsum('...ij, ...kj-&gt;ik', x, y)\nprint(xy.shape)\n\ntorch.Size([10, 10])"
   },
   {
     "objectID": "index.html",
