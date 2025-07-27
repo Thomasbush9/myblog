@@ -17,6 +17,7 @@ website:
         href: cv.pdf  # add this file later
 format:
   html:
+    toc: true
     theme:
       - cosmo
       - brand

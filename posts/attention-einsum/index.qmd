@@ -1,6 +1,10 @@
 ---
 title: "Understanding Attention with Einsum"
 date: 2025-07-17
+image: images/selfattention.png
+toc: true
+toc-title: "Table of Contents"
+toc-location: left
 ---
 ## Introduction
 
@@ -16,32 +20,146 @@ With this blog I aim to give you the insights that helped me understanding atten
 
 The attention mechanisms core concept is fairly simple if expressed with words. If you have an input sequence $N$ and you want to know how each element of your sequence relates to another one you should compare the similarity between the two, then you can scale the value of each element in order to reflect its global relationships with the other elements. Basically, you are saying that the meaning of an element of your sequence is reflected by its similarity with the others.
 
+In the diagram we can observe the full attention mechanism:
+
+![Self-Attention Diagram](images/selfattention.png){width=90% fig-align='center'}
+
 Now, this was actually the appropriate definition of 'Self-attention' as we are comparing the sequence with itself, there are other kinds of attention, but I believe that it's helpful to start with self attention first as it is more intuitive and it's the most used mechanism nowadays.
 
 
 ### What does really change between attention and MLP?
 
+The main difference of attention compared to other traditional architectures, such as multi layer perceptron, is that attention does not model the inner representations based on the weights/output relation, rather it modifies them based on the relations between inputs of the sequence and the outputs.
 
+::: {.columns}
+
+::: {.column width="50%"}
+![Attention Output](images/attention_com.png)
+:::
+
+::: {.column width="50%"}
+![MLP Output](images/mlp_comparison.png)
+:::
+
+:::
+
+
+This difference is clear if we consider that an attention layer does not change particurarly compared to a MLP. Attention has weights only in the linear layers that creates the embeddings
+
+### Computational Efficiency on GPUs
+
+The popularity of the attention mechanism is partly due to its extreme efficiency in processing input sequences. Specifically, attention allows us to compute a summary of the entire sequence for each element, in parallel. This makes it far more scalable than traditional sequence models like RNNs, which process inputs sequentially and are harder to parallelize.
+
+Before diving into how attention is computed on a GPU, it's helpful to understand how GPUs work in general. When we define a vector, such as vect_1, a special function called *kernel* is launched on the GPU. The kernel takes each element of the vector and assigns it to a separate thread, which is run by a core in the GPU.
+
+
+![gpu schematic](images/gpu_diagram.png){fig-align='center'}
+
+Now, if we compute the dot product between two vectors, the GPU doesn't process it as one big operation. Instead, the kernel divides the  computation into many smaller tasks, one for element, and assigns them to different cores. Each thread multiples one element from vect_1 with the corresponding element from the second vector. Finally, the results are combined using a reduction operation (sum), returning the final dot product.
+
+This kind of parallelism is what gives GPUs their advantage over CPUs for task like attention, where operation across large sequences can be run simultaneously instead of one after the other.
+
+When applying this to attention, it's clear how much more efficient a forward pass can be compared to a recurrent neural network (RNN) processing the same input sequence. In attention, each element of the sequence can be handled in parallel because the computations for different positions are independent of one another. This allows the model to assign different parts of the attention mechanism to separate GPU cores, achieving high parallelism and speed.
+In contrast, an RNN must compute each step sequentially, since the output at each time step depends on the result from the previous one. This dependency makes it difficult to parallelize, significantly slowing down the forward pass.
+
+![Attention vs RNNs](images/attention_rnn.png){fig-align='center'}
 
 ## Implementation
 
+To develop a multi-head attention module, we only need to import a couple of python's libraries, mostly to facilitate the backward pass during training, but I strongly encourage everyone to first build these modules from scratch to fully understand how they works (add link).
+```{python}
+import torch
+from torch import nn
+import math
+```
+
+Attention starts with the creation of three embeddings (queries, keys and values) generated from the same sequence input going through three different linear layers that map the sequence to the attention dimension $c$. This step is crucial as it's the only step where there are trainable parameters in this module, other than in the output layer. So in the code we define the three linear layers, and during the forward pass they create the query, key and value embedding. In the figure below you can see how we create the three embedding starting from the same sequence.
+
+![Embedding Creation](images/linear_embd_attention.png){fig-align='center'}
+
+The next step is to compute the affinities between the queries and the keys, this step is crucial as it's the main switch from a normal feed forward neural network and attention. Here we are generating a matrix where each element of the sequence is compared to all the others. The comparison is obtained through dot product, which produces higher values if two vectors are pointing in the same direction. In the code we compute the dot product by using Einsum, which is a very handy library to compute linear algebra operation (add link), basically we are considering only the last dimension for the query and key vector and we are generating a matrix of shape $b, c, c$, where $b$ stands for batch dimension.
+
+![Compute affinities](images/attention_affinities.png){fig-align='center'}
+
+Once we have completed this step the attention values are nearly computed. The last thing that we have left is to convert our affinities into weights using the softmax function, for those who do not remember it the softmax converts a vector into a probability distribution where the elements of the vector sum up to one. The formula is: $\sigma(\vect(z))_i = \frac{\exp(z_i)}{\sum^K_{j=1} \exp(z_j)}$.
+
+![Generate attention weights](images/attention_soft.png){fig-align='center'}
+
+Finally we compute the attention values by scaling the value vector by the attention weights and we return the output after passing it through a linear to map the attention dimension back to the same value of the input dimension.
+
+![Output Generation](images/output_attention.png){fig-align='center'}
+
+Now that we went through each step in detail we can put all of them together to built the initial diagram into a single python class called SelfAttentionModule. Below there is the full code to generate it.
+
+```{python}
+# we generate a random input
+x = torch.randn((12, 5, 10))
+#we then create a class:
+class SelfAttentionModule(nn.Module):
+    def __init__(self, x_in, c):
+        super().__init__()
+        self.c = c
+        # we define the three linear layers
+        self.linear_q = nn.Linear(x_in, c)
+        self.linear_k = nn.Linear(x_in, c)
+        self.linear_v = nn.Linear(x_in, c)
+        self.linear_o = nn.Linear(c, x_in)
+
+    def forward(self, x:torch.Tensor)->torch.Tensor:
+        # we apply the linear transformations
+        Q = self.linear_q(x)
+        # scale Q
+        Q = Q / math.sqrt(self.c)
+        K = self.linear_k(x)
+        V = self.linear_v(x)
+        # calculate affinities:
+        affinities = torch.einsum('...kj, ...zi->...kz',Q, K)
+        # convert to weights
+        attn_weights = torch.softmax(affinities, dim=-1)
+        # get the attn_values:
+        attn_values = torch.einsum('...kz, ...zc->...kc', attn_weights, V)
+        attn_values = self.linear_o(attn_values)
+        return attn_values, attn_weights
+```
 
 ## Visualization
+
+To visualize how attention really works, we are going to generate the attention values for a random sentence and plot them. We need first to import a pre-trained model so that we have meaningful input vectors for each token of our sentence. We are going to use DistilBert from the Transformers library (add link).
+
+```{python}
+from transformers import AutoTokenizer, AutoModel
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+model_name = "distilbert-base-uncased"
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+model = AutoModel.from_pretrained(model_name, output_attentions=True)
+```
+```{python}
+sentence = "The cat is fluffy and soft"
+inputs = tokenizer(sentence, return_tensors="pt")
+
+# Forward pass
+with torch.no_grad():
+    outputs = model(**inputs)
+
+# Extract attention matrices (layer 0, head 0)
+attentions = outputs.attentions  # List of layers -> [batch, heads, tokens, tokens]
+attention_matrix = attentions[0][0, 0]  # First layer, first head
+```
+We first divide our sentence into tokens and convert the tokens into embeddings. Then the model will generate the attention values which we can plot.
+
+```{python}
+tokens = tokenizer.convert_ids_to_tokens(inputs["input_ids"][0])
+plt.figure(figsize=(10, 8))
+sns.heatmap(attention_matrix, xticklabels=tokens, yticklabels=tokens, cmap="viridis")
+plt.title("Attention Matrix (Layer 0, Head 0)")
+plt.xlabel("Key")
+plt.ylabel("Query")
+plt.show()
+```
 
 ## Conclusion and Suggested Material
 
 
 
-```{python}
-import torch
-import math
-```
-
-
-```{python}
-y = torch.randn((12, 10, 5))
-x = torch.randn((12, 10, 5))
-
-xy = torch.einsum('...ij, ...kj->ik', x, y)
-print(xy.shape)
-```
