@@ -75,7 +75,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../../site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-a986a95301e671fce2c6472dffc862a1.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -137,7 +137,7 @@ window.Quarto = {
 <link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed fullcontent quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
@@ -182,7 +182,7 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Understanding Attention with Einsum</h1>
@@ -206,8 +206,27 @@ window.Quarto = {
   
   </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#the-core-idea-of-attention-and-why-it-works" id="toc-the-core-idea-of-attention-and-why-it-works" class="nav-link" data-scroll-target="#the-core-idea-of-attention-and-why-it-works">The Core Idea of Attention and Why It Works</a>
+  <ul class="collapse">
+  <li><a href="#what-does-really-change-between-attention-and-mlp" id="toc-what-does-really-change-between-attention-and-mlp" class="nav-link" data-scroll-target="#what-does-really-change-between-attention-and-mlp">What does really change between attention and MLP?</a></li>
+  <li><a href="#computational-efficiency-on-gpus" id="toc-computational-efficiency-on-gpus" class="nav-link" data-scroll-target="#computational-efficiency-on-gpus">Computational Efficiency on GPUs</a></li>
+  </ul></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
+  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization">Visualization</a></li>
+  <li><a href="#conclusion-and-suggested-material" id="toc-conclusion-and-suggested-material" class="nav-link" data-scroll-target="#conclusion-and-suggested-material">Conclusion and Suggested Material</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
 <main class="content quarto-banner-title-block" id="quarto-document-content">
 
@@ -225,33 +244,172 @@ window.Quarto = {
 <section id="the-core-idea-of-attention-and-why-it-works" class="level2">
 <h2 class="anchored" data-anchor-id="the-core-idea-of-attention-and-why-it-works">The Core Idea of Attention and Why It Works</h2>
 <p>The attention mechanisms core concept is fairly simple if expressed with words. If you have an input sequence <span class="math inline">\(N\)</span> and you want to know how each element of your sequence relates to another one you should compare the similarity between the two, then you can scale the value of each element in order to reflect its global relationships with the other elements. Basically, you are saying that the meaning of an element of your sequence is reflected by its similarity with the others.</p>
+<p>In the diagram we can observe the full attention mechanism:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/selfattention.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<figcaption>Self-Attention Diagram</figcaption>
+</figure>
+</div>
 <p>Now, this was actually the appropriate definition of ‘Self-attention’ as we are comparing the sequence with itself, there are other kinds of attention, but I believe that it’s helpful to start with self attention first as it is more intuitive and it’s the most used mechanism nowadays.</p>
 <section id="what-does-really-change-between-attention-and-mlp" class="level3">
 <h3 class="anchored" data-anchor-id="what-does-really-change-between-attention-and-mlp">What does really change between attention and MLP?</h3>
+<p>The main difference of attention compared to other traditional architectures, such as multi layer perceptron, is that attention does not model the inner representations based on the weights/output relation, rather it modifies them based on the relations between inputs of the sequence and the outputs.</p>
+<div class="columns">
+<div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/attention_com.png" class="img-fluid figure-img"></p>
+<figcaption>Attention Output</figcaption>
+</figure>
+</div>
+</div><div class="column" style="width:50%;">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/mlp_comparison.png" class="img-fluid figure-img"></p>
+<figcaption>MLP Output</figcaption>
+</figure>
+</div>
+</div>
+</div>
+<p>This difference is clear if we consider that an attention layer does not change particurarly compared to a MLP. Attention has weights only in the linear layers that creates the embeddings</p>
+</section>
+<section id="computational-efficiency-on-gpus" class="level3">
+<h3 class="anchored" data-anchor-id="computational-efficiency-on-gpus">Computational Efficiency on GPUs</h3>
+<p>The popularity of the attention mechanism is partly due to its extreme efficiency in processing input sequences. Specifically, attention allows us to compute a summary of the entire sequence for each element, in parallel. This makes it far more scalable than traditional sequence models like RNNs, which process inputs sequentially and are harder to parallelize.</p>
+<p>Before diving into how attention is computed on a GPU, it’s helpful to understand how GPUs work in general. When we define a vector, such as vect_1, a special function called <em>kernel</em> is launched on the GPU. The kernel takes each element of the vector and assigns it to a separate thread, which is run by a core in the GPU.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/gpu_diagram.png" class="img-fluid figure-img"></p>
+<figcaption>gpu schematic</figcaption>
+</figure>
+</div>
+<p>Now, if we compute the dot product between two vectors, the GPU doesn’t process it as one big operation. Instead, the kernel divides the computation into many smaller tasks, one for element, and assigns them to different cores. Each thread multiples one element from vect_1 with the corresponding element from the second vector. Finally, the results are combined using a reduction operation (sum), returning the final dot product.</p>
+<p>This kind of parallelism is what gives GPUs their advantage over CPUs for task like attention, where operation across large sequences can be run simultaneously instead of one after the other.</p>
+<p>When applying this to attention, it’s clear how much more efficient a forward pass can be compared to a recurrent neural network (RNN) processing the same input sequence. In attention, each element of the sequence can be handled in parallel because the computations for different positions are independent of one another. This allows the model to assign different parts of the attention mechanism to separate GPU cores, achieving high parallelism and speed. In contrast, an RNN must compute each step sequentially, since the output at each time step depends on the result from the previous one. This dependency makes it difficult to parallelize, significantly slowing down the forward pass.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/attention_rnn.png" class="img-fluid figure-img"></p>
+<figcaption>Attention vs RNNs</figcaption>
+</figure>
+</div>
 </section>
 </section>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
+<p>To develop a multi-head attention module, we only need to import a couple of python’s libraries, mostly to facilitate the backward pass during training, but I strongly encourage everyone to first build these modules from scratch to fully understand how they works (add link).</p>
+<div id="f322e868" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> nn</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Attention starts with the creation of three embeddings (queries, keys and values) generated from the same sequence input going through three different linear layers that map the sequence to the attention dimension <span class="math inline">\(c\)</span>. This step is crucial as it’s the only step where there are trainable parameters in this module, other than in the output layer. So in the code we define the three linear layers, and during the forward pass they create the query, key and value embedding. In the figure below you can see how we create the three embedding starting from the same sequence.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/linear_embd_attention.png" class="img-fluid figure-img"></p>
+<figcaption>Embedding Creation</figcaption>
+</figure>
+</div>
+<p>The next step is to compute the affinities between the queries and the keys, this step is crucial as it’s the main switch from a normal feed forward neural network and attention. Here we are generating a matrix where each element of the sequence is compared to all the others. The comparison is obtained through dot product, which produces higher values if two vectors are pointing in the same direction. In the code we compute the dot product by using Einsum, which is a very handy library to compute linear algebra operation (add link), basically we are considering only the last dimension for the query and key vector and we are generating a matrix of shape <span class="math inline">\(b, c, c\)</span>, where <span class="math inline">\(b\)</span> stands for batch dimension.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/attention_affinities.png" class="img-fluid figure-img"></p>
+<figcaption>Compute affinities</figcaption>
+</figure>
+</div>
+<p>Once we have completed this step the attention values are nearly computed. The last thing that we have left is to convert our affinities into weights using the softmax function, for those who do not remember it the softmax converts a vector into a probability distribution where the elements of the vector sum up to one. The formula is: <span class="math inline">\(\sigma(\vect(z))_i = \frac{\exp(z_i)}{\sum^K_{j=1} \exp(z_j)}\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/attention_soft.png" class="img-fluid figure-img"></p>
+<figcaption>Generate attention weights</figcaption>
+</figure>
+</div>
+<p>Finally we compute the attention values by scaling the value vector by the attention weights and we return the output after passing it through a linear to map the attention dimension back to the same value of the input dimension.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/output_attention.png" class="img-fluid figure-img"></p>
+<figcaption>Output Generation</figcaption>
+</figure>
+</div>
+<p>Now that we went through each step in detail we can put all of them together to built the initial diagram into a single python class called SelfAttentionModule. Below there is the full code to generate it.</p>
+<div id="163c0957" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we generate a random input</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">10</span>))</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#we then create a class:</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SelfAttentionModule(nn.Module):</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, x_in, c):</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.c <span class="op">=</span> c</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>        <span class="co"># we define the three linear layers</span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_q <span class="op">=</span> nn.Linear(x_in, c)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_k <span class="op">=</span> nn.Linear(x_in, c)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_v <span class="op">=</span> nn.Linear(x_in, c)</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.linear_o <span class="op">=</span> nn.Linear(c, x_in)</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> forward(<span class="va">self</span>, x:torch.Tensor)<span class="op">-&gt;</span>torch.Tensor:</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>        <span class="co"># we apply the linear transformations</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>        Q <span class="op">=</span> <span class="va">self</span>.linear_q(x)</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>        <span class="co"># scale Q</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>        Q <span class="op">=</span> Q <span class="op">/</span> math.sqrt(<span class="va">self</span>.c)</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>        K <span class="op">=</span> <span class="va">self</span>.linear_k(x)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a>        V <span class="op">=</span> <span class="va">self</span>.linear_v(x)</span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>        <span class="co"># calculate affinities:</span></span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>        affinities <span class="op">=</span> torch.einsum(<span class="st">'...kj, ...zi-&gt;...kz'</span>,Q, K)</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>        <span class="co"># convert to weights</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>        attn_weights <span class="op">=</span> torch.softmax(affinities, dim<span class="op">=-</span><span class="dv">1</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a>        <span class="co"># get the attn_values:</span></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        attn_values <span class="op">=</span> torch.einsum(<span class="st">'...kz, ...zc-&gt;...kc'</span>, attn_weights, V)</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        attn_values <span class="op">=</span> <span class="va">self</span>.linear_o(attn_values)</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> attn_values, attn_weights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
 </section>
 <section id="visualization" class="level2">
 <h2 class="anchored" data-anchor-id="visualization">Visualization</h2>
+<p>To visualize how attention really works, we are going to generate the attention values for a random sentence and plot them. We need first to import a pre-trained model so that we have meaningful input vectors for each token of our sentence. We are going to use DistilBert from the Transformers library (add link).</p>
+<div id="04ce8665" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer, AutoModel</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">"distilbert-base-uncased"</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(model_name)</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModel.from_pretrained(model_name, output_attentions<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="884319f8" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sentence <span class="op">=</span> <span class="st">"The cat is fluffy and soft"</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span> tokenizer(sentence, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Forward pass</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> model(<span class="op">**</span>inputs)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract attention matrices (layer 0, head 0)</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>attentions <span class="op">=</span> outputs.attentions  <span class="co"># List of layers -&gt; [batch, heads, tokens, tokens]</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>attention_matrix <span class="op">=</span> attentions[<span class="dv">0</span>][<span class="dv">0</span>, <span class="dv">0</span>]  <span class="co"># First layer, first head</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>DistilBertSdpaAttention is used but `torch.nn.functional.scaled_dot_product_attention` does not support `output_attentions=True` or `head_mask`. Falling back to the manual attention implementation, but specifying the manual implementation will be required from Transformers version v5.0.0 onwards. This warning can be removed using the argument `attn_implementation="eager"` when loading the model.</code></pre>
+</div>
+</div>
+<p>We first divide our sentence into tokens and convert the tokens into embeddings. Then the model will generate the attention values which we can plot.</p>
+<div id="f114ac27" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tokens <span class="op">=</span> tokenizer.convert_ids_to_tokens(inputs[<span class="st">"input_ids"</span>][<span class="dv">0</span>])</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sns.heatmap(attention_matrix, xticklabels<span class="op">=</span>tokens, yticklabels<span class="op">=</span>tokens, cmap<span class="op">=</span><span class="st">"viridis"</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Attention Matrix (Layer 0, Head 0)"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Key"</span>)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Query"</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="index_files/figure-html/cell-6-output-1.png" width="761" height="671" class="figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 <section id="conclusion-and-suggested-material" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion-and-suggested-material">Conclusion and Suggested Material</h2>
-<div id="e1b030da" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="9d2afc16" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">5</span>))</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">10</span>, <span class="dv">5</span>))</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>xy <span class="op">=</span> torch.einsum(<span class="st">'...ij, ...kj-&gt;ik'</span>, x, y)</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(xy.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code>torch.Size([10, 10])</code></pre>
-</div>
-</div>
 
 
 </section>
