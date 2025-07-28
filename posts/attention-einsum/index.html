@@ -222,7 +222,7 @@ window.Quarto = {
   <li><a href="#positional-encoding-in-attention" id="toc-positional-encoding-in-attention" class="nav-link" data-scroll-target="#positional-encoding-in-attention">Positional Encoding in Attention</a></li>
   <li><a href="#computational-efficiency-on-gpus" id="toc-computational-efficiency-on-gpus" class="nav-link" data-scroll-target="#computational-efficiency-on-gpus">Computational Efficiency on GPUs</a></li>
   </ul></li>
-  <li><a href="#additional-material" id="toc-additional-material" class="nav-link" data-scroll-target="#additional-material">Additional-Material</a></li>
+  <li><a href="#Additional-Material" id="toc-Additional-Material" class="nav-link" data-scroll-target="#Additional-Material">Additional Material</a></li>
   </ul>
 </nav>
 </nav>
@@ -239,9 +239,9 @@ window.Quarto = {
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based on attention mechanisms, has received over <span class="math inline">\(185,000\)</span> citations.</p>
+<p>The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if not the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based on attention mechanisms, has received over <span class="math inline">\(185,000\)</span> citations.</p>
 <p>To put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’.</p>
-<p>I still remember the first time that I encountered attention few years ago, it was during the first my first class of foundations of AI, and I found the idea of Query, Key and Values confusing and it took me a while to really grasp the core idea behind the attention mechanisms and why it works so well.</p>
+<p>I still remember the first time that I encountered attention few years ago, it was during my first class of foundations of AI, and I found the idea of Query, Key and Values confusing and it took me a while to really grasp the core idea behind the attention mechanisms and why it works so well.</p>
 <p>With this blog I aim to give you the insights that helped me understanding attention so that you can start build it yourself. Thus, I will first explain the core idea of attention, the difference between other representations and then I will implement it from scratch using a PyTorch and Einsum (a very cool library for linear algebra operation, to read it more see <a href="https://www.google.com/url?sa=t&amp;source=web&amp;rct=j&amp;opi=89978449&amp;url=https://rockt.ai/2018/04/30/einsum&amp;ved=2ahUKEwiSgMGipd2OAxXrFlkFHbrGFzgQFnoECAkQAQ&amp;usg=AOvVaw1DJ3yx6XBk67BIM9BdZ4fi">einsum is all you need</a></p>
 </section>
 <section id="the-core-idea-of-attention-and-why-it-works" class="level2">
@@ -297,7 +297,7 @@ window.Quarto = {
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
 <p>To develop an attention module, we only need to import a couple of python’s libraries, mostly to facilitate the backward pass during training, although if you are not familiar with backpropagation and how torch modules work under the hood, I strongly encourage you to try to implement some basics one yourself, see the <a href="#Additional-Material">Additional material</a> for resources on this.</p>
-<div id="e84e9849" class="cell" data-execution_count="1">
+<div id="ed74ab8b" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> affine_grid_generator, nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -310,7 +310,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>Next, we have to compute the affinities (similarity) between the query and key embeddings. We generate a matrix where each element of the sequence is compared to all the others and the values reflect the similarity between two elements as results of the dot product, which produces higher values for similar vectors.</p>
-<p>In the code we can compute the dot product by using Einsum, basically given the query and key embedding <span class="math inline">\(Q\)</span>, <span class="math inline">\(K\)</span> we compute: Q V = ^c_{i=1} q_i * v_i$. The output will be a matrix of shape: batch, dim_attention, dim_attention.</p>
+<p>In the code we can compute the dot product by using Einsum, basically given the query and key embedding <span class="math inline">\(Q\)</span>, <span class="math inline">\(K\)</span> we compute: <span class="math inline">\(Q \cdot V = \sum^c_{i=1} q_i * v_i\)</span>. The output will be a matrix of shape: batch, dim_attention, dim_attention.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/attention_affinities.png" class="img-fluid figure-img"></p>
@@ -332,7 +332,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>Now that we went through each step in detail we can put all of them together to built the initial diagram into a single python class called SelfAttentionModule. Below there is the full code to generate it.</p>
-<div id="388e9d57" class="cell" data-execution_count="2">
+<div id="a1238962" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we generate a random input</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">10</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#we then create a class:</span></span>
@@ -372,7 +372,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>The mask is constructed by zerooing out the upper triangle of the attention matrix. These positions are then replaced with negatively infinity so that when passing through the softmax their contributions become zero. In PyTorch we can do it like this:</p>
-<div id="300f3b8b" class="cell" data-execution_count="3">
+<div id="ee60643e" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#generate a random tensor</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>affinities <span class="op">=</span> torch.randn((<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#create the mask</span></span>
@@ -408,8 +408,8 @@ window.Quarto = {
 </div>
 </section>
 </section>
-<section id="additional-material" class="level2">
-<h2 class="anchored" data-anchor-id="additional-material">Additional-Material</h2>
+<section id="Additional-Material" class="level2">
+<h2 class="anchored" data-anchor-id="Additional-Material">Additional Material</h2>
 <ol type="1">
 <li>The original paper: <a href="https://www.google.com/url?sa=t&amp;source=web&amp;rct=j&amp;opi=89978449&amp;url=https://arxiv.org/abs/1706.03762&amp;ved=2ahUKEwioqvCC4t2OAxU9k4kEHfNSJl8QFnoECAgQAQ&amp;usg=AOvVaw2ceXGQohV5Kx51VSkfkG08">Attention is all you need</a></li>
 <li>To review vector similarities and dot product visit: <a href="https://www.pinecone.io/learn/vector-similarity/">Vector Similarity Explained</a></li>
@@ -494,7 +494,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/github\.com\/Thomasbush9\/myblog\/");
+        var filterRegex = new RegExp("https:\/\/thomasbush9\.github\.io\/myblog\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
