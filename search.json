@@ -1,12 +1,5 @@
 [
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About Me",
-    "section": "",
-    "text": "👋 Thomas Wyndham Bush\nStudent and Research Assistant in ML & Neuroscience\nI’m a researcher exploring the intersection of machine learning, computational neuroscience, and language. I build tools for analyzing behavior, neural data, and AI explainability.\nThis site collects my articles, experiments, and thoughts as I learn and build in the open."
-  },
-  {
     "objectID": "posts/attention-einsum/index.html",
     "href": "posts/attention-einsum/index.html",
     "title": "Why Attention Is All You Need?",
@@ -40,6 +33,13 @@
     "title": "Why Attention Is All You Need?",
     "section": "Additional Material",
     "text": "Additional Material\n\nThe original paper: Attention is all you need\nTo review vector similarities and dot product visit: Vector Similarity Explained\nEinsum blog: Einsum is all you need\nCourse on Neural network basics from scratch: Neural Networks from Scratch in Pyton\nAnother blog about Transformer from Scratch"
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
+    "section": "",
+    "text": "👋 Thomas Wyndham Bush\nStudent and Research Assistant in ML & Neuroscience\nI’m a researcher exploring the intersection of machine learning, computational neuroscience, and language. I build tools for analyzing behavior, neural data, and AI explainability.\nThis site collects my articles, experiments, and thoughts as I learn and build in the open."
   },
   {
     "objectID": "index.html",
