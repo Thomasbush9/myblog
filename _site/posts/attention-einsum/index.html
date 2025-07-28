@@ -8,7 +8,7 @@
 
 <meta name="dcterms.date" content="2025-07-17">
 
-<title>Understanding Attention with Einsum – Thomas W. Bush</title>
+<title>Why Attention Is All You Need? – Thomas W. Bush</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -165,12 +165,12 @@ window.Quarto = {
 </ul>
             <ul class="navbar-nav navbar-nav-scroll ms-auto">
   <li class="nav-item compact">
-    <a class="nav-link" href="https://github.com/thomasbush"> <i class="bi bi-github" role="img">
+    <a class="nav-link" href="https://github.com/Thomasbush9"> <i class="bi bi-github" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="../../cv.pdf"> <i class="bi bi-file-person" role="img">
+    <a class="nav-link" href="../../cv/ThomasBush_CV.pdf"> <i class="bi bi-file-person" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -185,7 +185,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
-      <h1 class="title">Understanding Attention with Einsum</h1>
+      <h1 class="title">Why Attention Is All You Need?</h1>
                       </div>
   </div>
     
@@ -215,11 +215,14 @@ window.Quarto = {
   <li><a href="#the-core-idea-of-attention-and-why-it-works" id="toc-the-core-idea-of-attention-and-why-it-works" class="nav-link" data-scroll-target="#the-core-idea-of-attention-and-why-it-works">The Core Idea of Attention and Why It Works</a>
   <ul class="collapse">
   <li><a href="#what-does-really-change-between-attention-and-mlp" id="toc-what-does-really-change-between-attention-and-mlp" class="nav-link" data-scroll-target="#what-does-really-change-between-attention-and-mlp">What does really change between attention and MLP?</a></li>
+  </ul></li>
+  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a>
+  <ul class="collapse">
+  <li><a href="#masked-attention" id="toc-masked-attention" class="nav-link" data-scroll-target="#masked-attention">Masked Attention</a></li>
+  <li><a href="#positional-encoding-in-attention" id="toc-positional-encoding-in-attention" class="nav-link" data-scroll-target="#positional-encoding-in-attention">Positional Encoding in Attention</a></li>
   <li><a href="#computational-efficiency-on-gpus" id="toc-computational-efficiency-on-gpus" class="nav-link" data-scroll-target="#computational-efficiency-on-gpus">Computational Efficiency on GPUs</a></li>
   </ul></li>
-  <li><a href="#implementation" id="toc-implementation" class="nav-link" data-scroll-target="#implementation">Implementation</a></li>
-  <li><a href="#visualization" id="toc-visualization" class="nav-link" data-scroll-target="#visualization">Visualization</a></li>
-  <li><a href="#conclusion-and-suggested-material" id="toc-conclusion-and-suggested-material" class="nav-link" data-scroll-target="#conclusion-and-suggested-material">Conclusion and Suggested Material</a></li>
+  <li><a href="#Additional-Material" id="toc-Additional-Material" class="nav-link" data-scroll-target="#Additional-Material">Additional Material</a></li>
   </ul>
 </nav>
 </nav>
@@ -236,25 +239,41 @@ window.Quarto = {
 
 <section id="introduction" class="level2">
 <h2 class="anchored" data-anchor-id="introduction">Introduction</h2>
-<p>The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if no the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based solely on attention mechanisms, has received over <span class="math inline">\(185,000\)</span> citations.</p>
+<p>The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if not the most. Its influence has extended beyond computer science, influencing many disciplines (AlphaFold, the field-changing model for protein structure prediction, is heavily dependent on the attention mechanism). As of this writing, the paper ‘Attention Is All You Need’, which introduced the transformer architecture based on attention mechanisms, has received over <span class="math inline">\(185,000\)</span> citations.</p>
 <p>To put that into perspective: the combined citation count of Darwin’s ‘On the Origin of Species’, Hubel and Wiesel’s seminal work on the visual system, and Chomsky’s ‘Syntactic Structures’, a foundational text in linguistics, is still less than half of ‘Attention Is All You Need’.</p>
-<p>I still remember the first time that I encountered attention few years ago, it was during the first class of my Master in Cognitive Sciences and AI. I must say that it has not been love at first sight, actually it was quite the opposite. I found the idea of Query, Key and Values confusing and it took me a while to really grasp the core idea behind the attention mechanisms and why it works so well.</p>
-<p>With this blog I aim to give you the insights that helped me understanding attention so that you can start build it yourself. Thus, I will first explain the core idea of attention, the difference between other representations and then I will implement it from scratch using a PyTorch and Einsum (which is a very powerful library for linear algebra operations.)</p>
+<p>I still remember the first time that I encountered attention few years ago, it was during my first class of foundations of AI, and I found the idea of Query, Key and Values confusing and it took me a while to really grasp the core idea behind the attention mechanisms and why it works so well.</p>
+<p>With this blog I aim to give you the insights that helped me understanding attention so that you can start build it yourself. Thus, I will first explain the core idea of attention, the difference between other representations and then I will implement it from scratch using a PyTorch and Einsum (a very cool library for linear algebra operation, to read it more see <a href="https://www.google.com/url?sa=t&amp;source=web&amp;rct=j&amp;opi=89978449&amp;url=https://rockt.ai/2018/04/30/einsum&amp;ved=2ahUKEwiSgMGipd2OAxXrFlkFHbrGFzgQFnoECAkQAQ&amp;usg=AOvVaw1DJ3yx6XBk67BIM9BdZ4fi">einsum is all you need</a></p>
 </section>
 <section id="the-core-idea-of-attention-and-why-it-works" class="level2">
 <h2 class="anchored" data-anchor-id="the-core-idea-of-attention-and-why-it-works">The Core Idea of Attention and Why It Works</h2>
-<p>The attention mechanisms core concept is fairly simple if expressed with words. If you have an input sequence <span class="math inline">\(N\)</span> and you want to know how each element of your sequence relates to another one you should compare the similarity between the two, then you can scale the value of each element in order to reflect its global relationships with the other elements. Basically, you are saying that the meaning of an element of your sequence is reflected by its similarity with the others.</p>
-<p>In the diagram we can observe the full attention mechanism:</p>
+<p>At its heart, the attention mechanism is conceptually simple. Suppose you have a sequence of elements N (e.g, words in a sentence), and you want to understand how each element relates to every other. The idea is to compare their similarities and then assign weights to each element reflecting its importance relative to the others. We could say:</p>
+<blockquote class="blockquote">
+<p>The meaning of each element is defined not in isolation, but by how strongly it relates to all other elements in the sequence.</p>
+</blockquote>
+<p>To implement this idea, the input sequence <span class="math inline">\(S\)</span> is transformed into three different embeddings: Queries (<strong>Q</strong>), Keys (<strong>K</strong>) and Values (<strong>V</strong>). Then Queries and Keys are compared to measure similarity, and Values are weighted by these similarities to produce the final context-aware representations.</p>
+<p>Before we dive into the actual implementation of attention, it’s important to understand where it fits within the broader architecture of a Transformer. As shown in the original Attention Is All You Need paper, Transformers use a mechanism called multi-head attention, which means that the attention operation is applied multiple times in parallel.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="images/selfattention.png" class="img-fluid figure-img" style="width:90.0%"></p>
+<p><img src="images/overview_transformer.png" class="img-fluid figure-img" style="width:50.0%"></p>
+<figcaption>Overview Transformer Architecture</figcaption>
+</figure>
+</div>
+<p>Each head produces its own context-aware representation of the input, and these are then concatenated and passed through additional layers. For simplicity, the diagram below, and the rest of this post, will focus on how a single attention head works in isolation.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/attention_full.png" class="img-fluid figure-img"></p>
 <figcaption>Self-Attention Diagram</figcaption>
 </figure>
 </div>
-<p>Now, this was actually the appropriate definition of ‘Self-attention’ as we are comparing the sequence with itself, there are other kinds of attention, but I believe that it’s helpful to start with self attention first as it is more intuitive and it’s the most used mechanism nowadays.</p>
+<p>Now, this was actually the appropriate definition of ‘Self-attention’ as we are comparing the sequence with itself, there are other kinds of attention, but I believe that it’s helpful to start with self attention first as it is more intuitive and it’s the most used mechanism nowadays, for an overview of the different kinds of attention you can visit <a href="https://arxiv.org/abs/2203.14263">A General Survey on Attention Mechanisms in Deep Learning</a>, where they offer a nice taxonomy of the various attention mechanisms.</p>
 <section id="what-does-really-change-between-attention-and-mlp" class="level3">
 <h3 class="anchored" data-anchor-id="what-does-really-change-between-attention-and-mlp">What does really change between attention and MLP?</h3>
-<p>The main difference of attention compared to other traditional architectures, such as multi layer perceptron, is that attention does not model the inner representations based on the weights/output relation, rather it modifies them based on the relations between inputs of the sequence and the outputs.</p>
+<p>The main difference between attention and traditional architectures like MLPs is in how input information is processed. In an MLP, each input vector is transformed independently by the model’s weights. That is, the model learns a representation by projecting the input using a linear layer:</p>
+<p><span class="math display">\[\text{MLP}: h = W^TX\]</span></p>
+<p>Here <span class="math inline">\(X\)</span> is the input vector, and <span class="math inline">\(W\)</span> is a learnable weight matrix. This transformation does not take into account the other elements of the input sequence. To model relationships between inputs, earlier architectures like Recurrent Neural Networks (RNNs) introduced recurrence, allowing the model to incorporate previous context step-by-step.</p>
+<p>In contrast, attention directly models the relationships between inputs by comparing them to one another after the linear projections.</p>
+<p><span class="math display">\[\text{Attention}(Q, K, V): \text{softmax}(\frac{QK^T}{\sqrt{d_k}})V\]</span></p>
+<p>As we have seen, this operation allows each token to dynamically attend to the most relevant parts of the sequence, producing contextualized representations that reflect interactions between the inputs.</p>
 <div class="columns">
 <div class="column" style="width:50%;">
 <div class="quarto-figure quarto-figure-center">
@@ -272,52 +291,33 @@ window.Quarto = {
 </div>
 </div>
 </div>
-<p>This difference is clear if we consider that an attention layer does not change particurarly compared to a MLP. Attention has weights only in the linear layers that creates the embeddings</p>
-</section>
-<section id="computational-efficiency-on-gpus" class="level3">
-<h3 class="anchored" data-anchor-id="computational-efficiency-on-gpus">Computational Efficiency on GPUs</h3>
-<p>The popularity of the attention mechanism is partly due to its extreme efficiency in processing input sequences. Specifically, attention allows us to compute a summary of the entire sequence for each element, in parallel. This makes it far more scalable than traditional sequence models like RNNs, which process inputs sequentially and are harder to parallelize.</p>
-<p>Before diving into how attention is computed on a GPU, it’s helpful to understand how GPUs work in general. When we define a vector, such as vect_1, a special function called <em>kernel</em> is launched on the GPU. The kernel takes each element of the vector and assigns it to a separate thread, which is run by a core in the GPU.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/gpu_diagram.png" class="img-fluid figure-img"></p>
-<figcaption>gpu schematic</figcaption>
-</figure>
-</div>
-<p>Now, if we compute the dot product between two vectors, the GPU doesn’t process it as one big operation. Instead, the kernel divides the computation into many smaller tasks, one for element, and assigns them to different cores. Each thread multiples one element from vect_1 with the corresponding element from the second vector. Finally, the results are combined using a reduction operation (sum), returning the final dot product.</p>
-<p>This kind of parallelism is what gives GPUs their advantage over CPUs for task like attention, where operation across large sequences can be run simultaneously instead of one after the other.</p>
-<p>When applying this to attention, it’s clear how much more efficient a forward pass can be compared to a recurrent neural network (RNN) processing the same input sequence. In attention, each element of the sequence can be handled in parallel because the computations for different positions are independent of one another. This allows the model to assign different parts of the attention mechanism to separate GPU cores, achieving high parallelism and speed. In contrast, an RNN must compute each step sequentially, since the output at each time step depends on the result from the previous one. This dependency makes it difficult to parallelize, significantly slowing down the forward pass.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="images/attention_rnn.png" class="img-fluid figure-img"></p>
-<figcaption>Attention vs RNNs</figcaption>
-</figure>
-</div>
+<p>The difference is only in the operation after the linear transformations which allows to adjust the weights based on how to model input relations rather than input-weights relations.</p>
 </section>
 </section>
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
-<p>To develop a multi-head attention module, we only need to import a couple of python’s libraries, mostly to facilitate the backward pass during training, but I strongly encourage everyone to first build these modules from scratch to fully understand how they works (add link).</p>
-<div id="f322e868" class="cell" data-execution_count="1">
+<p>To develop an attention module, we only need to import a couple of python’s libraries, mostly to facilitate the backward pass during training, although if you are not familiar with backpropagation and how torch modules work under the hood, I strongly encourage you to try to implement some basics one yourself, see the <a href="#Additional-Material">Additional material</a> for resources on this.</p>
+<div id="380f651e" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> nn</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> affine_grid_generator, nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>Attention starts with the creation of three embeddings (queries, keys and values) generated from the same sequence input going through three different linear layers that map the sequence to the attention dimension <span class="math inline">\(c\)</span>. This step is crucial as it’s the only step where there are trainable parameters in this module, other than in the output layer. So in the code we define the three linear layers, and during the forward pass they create the query, key and value embedding. In the figure below you can see how we create the three embedding starting from the same sequence.</p>
+<p>As we have seen, attention starts with the mapping of the input sequence (batch, n_tokens, dim_input) into three embeddings (Q, K, V) of shape: batch, n_tokens, dim_attention. This step is crucial as it’s the only one where there are trainable parameters other than in the output layer.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/linear_embd_attention.png" class="img-fluid figure-img"></p>
 <figcaption>Embedding Creation</figcaption>
 </figure>
 </div>
-<p>The next step is to compute the affinities between the queries and the keys, this step is crucial as it’s the main switch from a normal feed forward neural network and attention. Here we are generating a matrix where each element of the sequence is compared to all the others. The comparison is obtained through dot product, which produces higher values if two vectors are pointing in the same direction. In the code we compute the dot product by using Einsum, which is a very handy library to compute linear algebra operation (add link), basically we are considering only the last dimension for the query and key vector and we are generating a matrix of shape <span class="math inline">\(b, c, c\)</span>, where <span class="math inline">\(b\)</span> stands for batch dimension.</p>
+<p>Next, we have to compute the affinities (similarity) between the query and key embeddings. We generate a matrix where each element of the sequence is compared to all the others and the values reflect the similarity between two elements as results of the dot product, which produces higher values for similar vectors.</p>
+<p>In the code we can compute the dot product by using Einsum, basically given the query and key embedding <span class="math inline">\(Q\)</span>, <span class="math inline">\(K\)</span> we compute: <span class="math inline">\(Q \cdot V = \sum^c_{i=1} q_i * v_i\)</span>. The output will be a matrix of shape: batch, dim_attention, dim_attention.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/attention_affinities.png" class="img-fluid figure-img"></p>
 <figcaption>Compute affinities</figcaption>
 </figure>
 </div>
-<p>Once we have completed this step the attention values are nearly computed. The last thing that we have left is to convert our affinities into weights using the softmax function, for those who do not remember it the softmax converts a vector into a probability distribution where the elements of the vector sum up to one. The formula is: <span class="math inline">\(\sigma(\vect(z))_i = \frac{\exp(z_i)}{\sum^K_{j=1} \exp(z_j)}\)</span>.</p>
+<p>Then, it is important to convert our affinities to weights that we can use to scale the value embedding. To do so, we use the softmax function to convert the values of the matrix into a probability distribution. The softmax formula is: <span class="math inline">\(\sigma(\vec{z})_i = \frac{\exp(z_i)}{\sum^K_{j=1} \exp(z_j)}\)</span>.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="images/attention_soft.png" class="img-fluid figure-img"></p>
@@ -332,7 +332,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>Now that we went through each step in detail we can put all of them together to built the initial diagram into a single python class called SelfAttentionModule. Below there is the full code to generate it.</p>
-<div id="163c0957" class="cell" data-execution_count="2">
+<div id="6a68e7b0" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we generate a random input</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">10</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#we then create a class:</span></span>
@@ -362,54 +362,61 @@ window.Quarto = {
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        attn_values <span class="op">=</span> <span class="va">self</span>.linear_o(attn_values)</span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> attn_values, attn_weights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-</section>
-<section id="visualization" class="level2">
-<h2 class="anchored" data-anchor-id="visualization">Visualization</h2>
-<p>To visualize how attention really works, we are going to generate the attention values for a random sentence and plot them. We need first to import a pre-trained model so that we have meaningful input vectors for each token of our sentence. We are going to use DistilBert from the Transformers library (add link).</p>
-<div id="04ce8665" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer, AutoModel</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>model_name <span class="op">=</span> <span class="st">"distilbert-base-uncased"</span></span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> AutoTokenizer.from_pretrained(model_name)</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> AutoModel.from_pretrained(model_name, output_attentions<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<div id="884319f8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sentence <span class="op">=</span> <span class="st">"The cat is fluffy and soft"</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>inputs <span class="op">=</span> tokenizer(sentence, return_tensors<span class="op">=</span><span class="st">"pt"</span>)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Forward pass</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> torch.no_grad():</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    outputs <span class="op">=</span> model(<span class="op">**</span>inputs)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Extract attention matrices (layer 0, head 0)</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>attentions <span class="op">=</span> outputs.attentions  <span class="co"># List of layers -&gt; [batch, heads, tokens, tokens]</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>attention_matrix <span class="op">=</span> attentions[<span class="dv">0</span>][<span class="dv">0</span>, <span class="dv">0</span>]  <span class="co"># First layer, first head</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>DistilBertSdpaAttention is used but `torch.nn.functional.scaled_dot_product_attention` does not support `output_attentions=True` or `head_mask`. Falling back to the manual attention implementation, but specifying the manual implementation will be required from Transformers version v5.0.0 onwards. This warning can be removed using the argument `attn_implementation="eager"` when loading the model.</code></pre>
-</div>
-</div>
-<p>We first divide our sentence into tokens and convert the tokens into embeddings. Then the model will generate the attention values which we can plot.</p>
-<div id="f114ac27" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>tokens <span class="op">=</span> tokenizer.convert_ids_to_tokens(inputs[<span class="st">"input_ids"</span>][<span class="dv">0</span>])</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>sns.heatmap(attention_matrix, xticklabels<span class="op">=</span>tokens, yticklabels<span class="op">=</span>tokens, cmap<span class="op">=</span><span class="st">"viridis"</span>)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>plt.title(<span class="st">"Attention Matrix (Layer 0, Head 0)"</span>)</span>
-<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Key"</span>)</span>
-<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Query"</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display">
-<div>
+<section id="masked-attention" class="level3">
+<h3 class="anchored" data-anchor-id="masked-attention">Masked Attention</h3>
+<p>Importantly, since attention is often used in next token prediction tasks, if we were using the full attention weights across the entire sequence, we’d allow each token to attend all future tokens, which would be like cheating. To prevent this, we apply a casual mask to the attention scores before computing the softmax. The mask will ensure that each token can only attend to the previous ones.</p>
+<div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="index_files/figure-html/cell-6-output-1.png" width="761" height="671" class="figure-img"></p>
+<p><img src="images/masked_attention.png" class="img-fluid figure-img"></p>
+<figcaption>Attention Mask</figcaption>
 </figure>
 </div>
-</div>
+<p>The mask is constructed by zerooing out the upper triangle of the attention matrix. These positions are then replaced with negatively infinity so that when passing through the softmax their contributions become zero. In PyTorch we can do it like this:</p>
+<div id="a2992296" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#generate a random tensor</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>affinities <span class="op">=</span> torch.randn((<span class="dv">4</span>, <span class="dv">4</span>))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#create the mask</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> torch.tril(torch.ones_like(affinities)).<span class="bu">bool</span>()</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#apply the mask</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>affinities <span class="op">=</span> affinities.masked_fill(mask<span class="op">==</span><span class="dv">0</span>, <span class="bu">float</span>(<span class="st">'-inf'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
-<section id="conclusion-and-suggested-material" class="level2">
-<h2 class="anchored" data-anchor-id="conclusion-and-suggested-material">Conclusion and Suggested Material</h2>
+<section id="positional-encoding-in-attention" class="level3">
+<h3 class="anchored" data-anchor-id="positional-encoding-in-attention">Positional Encoding in Attention</h3>
+<p>An interesting point that one could make at this stage is: how does attention keeps track of the order of the words? Well, it doesn’t. Indeed, our implementation of attention would give use the same results regardless of the input sequence order, because it treats the input as a set not a sequence.</p>
+<p>To solve we can tell the model where each token is in the sequence. That is the job of <em>positional encoding</em>.</p>
+<p>The core idea behind positional encoding is to add to the token embedding a positional embedding, which encodes its position in the sequence. In this was we give the model a sense of location even when all the words in a sentence are the same but the order is different. For an overview of positional encoding I recommend you to visit <a href="https://d2l.ai/chapter_attention-mechanisms-and-transformers/self-attention-and-positional-encoding.html">Dive into DL</a> chapter about that.</p>
+</section>
+<section id="computational-efficiency-on-gpus" class="level3">
+<h3 class="anchored" data-anchor-id="computational-efficiency-on-gpus">Computational Efficiency on GPUs</h3>
+<p>The popularity of the attention mechanism is partly due to its extreme efficiency in processing input sequences. Specifically, attention allows us to compute a summary of the entire sequence for each element, in parallel. This makes it far more scalable than traditional sequence models like RNNs, which process inputs sequentially and are harder to parallelize.</p>
+<p>Before diving into how attention is computed on a GPU, it’s helpful to understand how GPUs work in general. When we define a vector, such as vect_1, a special function called <em>kernel</em> is launched on the GPU. The kernel takes each element of the vector and assigns it to a separate thread, which is run by a core in the GPU.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/gpu_diagram.png" class="img-fluid figure-img"></p>
+<figcaption>gpu schematic</figcaption>
+</figure>
+</div>
+<p>Now, if we compute the dot product between two vectors, the GPU doesn’t process it as one big operation. Instead, the kernel divides the computation into many smaller tasks, one for element, and assigns them to different cores. Each thread multiples one element from vect_1 with the corresponding element from the second vector. Finally, the results are combined using a reduction operation (sum), returning the final dot product.</p>
+<p>This kind of parallelism is what gives GPUs their advantage over CPUs for task like attention, where operation across large sequences can be run simultaneously instead of one after the other.</p>
+<p>When applying this to attention, it’s clear how much more efficient a forward pass can be compared to a recurrent neural network (RNN) processing the same input sequence. In attention, each element of the sequence can be handled in parallel because the computations for different positions are independent of one another. This allows the model to assign different parts of the attention mechanism to separate GPU cores, achieving high parallelism and speed. In contrast, an RNN must compute each step sequentially, since the output at each time step depends on the result from the previous one. This dependency makes it difficult to parallelize, significantly slowing down the forward pass.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="images/attention_rnn.png" class="img-fluid figure-img"></p>
+<figcaption>Attention vs RNNs</figcaption>
+</figure>
+</div>
+</section>
+</section>
+<section id="Additional-Material" class="level2">
+<h2 class="anchored" data-anchor-id="Additional-Material">Additional Material</h2>
+<ol type="1">
+<li>The original paper: <a href="https://www.google.com/url?sa=t&amp;source=web&amp;rct=j&amp;opi=89978449&amp;url=https://arxiv.org/abs/1706.03762&amp;ved=2ahUKEwioqvCC4t2OAxU9k4kEHfNSJl8QFnoECAgQAQ&amp;usg=AOvVaw2ceXGQohV5Kx51VSkfkG08">Attention is all you need</a></li>
+<li>To review vector similarities and dot product visit: <a href="https://www.pinecone.io/learn/vector-similarity/">Vector Similarity Explained</a></li>
+<li>Einsum blog: <a href="https://www.google.com/url?sa=t&amp;source=web&amp;rct=j&amp;opi=89978449&amp;url=https://rockt.ai/2018/04/30/einsum&amp;ved=2ahUKEwjLi6fu4d2OAxXkCnkGHXU2LvgQFnoECAkQAQ&amp;usg=AOvVaw1DJ3yx6XBk67BIM9BdZ4fi">Einsum is all you need</a></li>
+<li>Course on Neural network basics from scratch: <a href="https://www.youtube.com/watch?v=Wo5dMEP_BbI&amp;list=PLQVvvaa0QuDcjD5BAw2DxE6OF2tius3V3">Neural Networks from Scratch in Pyton</a></li>
+<li>Another blog about <a href="https://peterbloem.nl/blog/transformers">Transformer from Scratch</a></li>
+</ol>
 
 
 </section>
@@ -487,7 +494,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp("https:\/\/github\.com\/Thomasbush9\/myblog\/");
+        var filterRegex = new RegExp("https:\/\/thomasbush9\.github\.io\/myblog\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

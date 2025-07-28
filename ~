@@ -3,7 +3,7 @@ project:
 
 website:
   title: "Thomas W. Bush"
-  site-url: "https://thomasbush9.github.io/myblog/"
+  site-url: "https://github.com/Thomasbush9/myblog/"
   navbar:
     left:
       - href: index.qmd
@@ -14,7 +14,7 @@ website:
       - icon: github
         href: https://github.com/Thomasbush9
       - icon: file-person
-        href: /cv/ThomasBush_CV.pdf
+        href: cv.pdf  # add this file later
 format:
   html:
     toc: true
