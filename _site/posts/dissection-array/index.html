@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2025-08-04">
 
-<title>myblog – Thomas W. Bush</title>
+<title>Dissection of a Tensor – Thomas W. Bush</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,28 +21,61 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
-<script src="site_libs/quarto-nav/quarto-nav.js"></script>
-<script src="site_libs/quarto-nav/headroom.min.js"></script>
-<script src="site_libs/clipboard/clipboard.min.js"></script>
-<script src="site_libs/quarto-search/autocomplete.umd.js"></script>
-<script src="site_libs/quarto-search/fuse.min.js"></script>
-<script src="site_libs/quarto-search/quarto-search.js"></script>
-<meta name="quarto:offset" content="./">
-<script src="site_libs/quarto-listing/list.min.js"></script>
-<script src="site_libs/quarto-listing/quarto-listing.js"></script>
-<script src="site_libs/quarto-html/quarto.js" type="module"></script>
-<script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/popper.min.js"></script>
-<script src="site_libs/quarto-html/tippy.umd.min.js"></script>
-<script src="site_libs/quarto-html/anchor.min.js"></script>
-<link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
-<script src="site_libs/bootstrap/bootstrap.min.js"></script>
-<link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap-c1fac2584b48ed01fb6e278e36375074.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -69,35 +103,6 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
-
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
@@ -129,17 +134,17 @@ window.Quarto = {
 };
 </script>
 
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="../../styles.css">
 </head>
 
-<body class="nav-fixed quarto-light">
+<body class="floating nav-fixed quarto-light">
 
 <div id="quarto-search-results"></div>
   <header id="quarto-header" class="headroom fixed-top quarto-banner">
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
-    <a class="navbar-brand" href="./index.html">
+    <a class="navbar-brand" href="../../index.html">
     <span class="navbar-title">Thomas W. Bush</span>
     </a>
   </div>
@@ -150,11 +155,11 @@ window.Quarto = {
           <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav navbar-nav-scroll me-auto">
   <li class="nav-item">
-    <a class="nav-link active" href="./index.html" aria-current="page"> 
+    <a class="nav-link" href="../../index.html"> 
 <span class="menu-text">Home</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link" href="./about.html"> 
+    <a class="nav-link" href="../../about.html"> 
 <span class="menu-text">About</span></a>
   </li>  
 </ul>
@@ -165,7 +170,7 @@ window.Quarto = {
 <span class="menu-text"></span></a>
   </li>  
   <li class="nav-item compact">
-    <a class="nav-link" href="./cv/ThomasBush_CV.pdf"> <i class="bi bi-file-person" role="img">
+    <a class="nav-link" href="../../cv/ThomasBush_CV.pdf"> <i class="bi bi-file-person" role="img">
 </i> 
 <span class="menu-text"></span></a>
   </li>  
@@ -177,88 +182,173 @@ window.Quarto = {
     </nav>
 </header>
 <!-- content -->
-<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
   <div class="quarto-title-banner page-columns page-full">
-    <div class="quarto-title column-page-left">
-      <h1 class="title">myblog</h1>
+    <div class="quarto-title column-body">
+      <h1 class="title">Dissection of a Tensor</h1>
                       </div>
   </div>
     
   
-  <div class="quarto-title-meta column-page-left">
+  <div class="quarto-title-meta">
 
       
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">August 4, 2025</p>
+      </div>
+    </div>
     
       
     </div>
     
   
-  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-full page-navbar">
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
 <!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Table of Contents</h2>
+   
+  <ul>
+  <li><a href="#introduction-what-is-it-an-array" id="toc-introduction-what-is-it-an-array" class="nav-link active" data-scroll-target="#introduction-what-is-it-an-array">Introduction: What Is It an Array?</a>
+  <ul class="collapse">
+  <li><a href="#what-about-arrays" id="toc-what-about-arrays" class="nav-link" data-scroll-target="#what-about-arrays">What about Arrays</a></li>
+  <li><a href="#an-important-property-of-arrays-strided-view" id="toc-an-important-property-of-arrays-strided-view" class="nav-link" data-scroll-target="#an-important-property-of-arrays-strided-view">An Important Property of Arrays: Strided View</a></li>
+  </ul></li>
+  <li><a href="#what-about-tensors" id="toc-what-about-tensors" class="nav-link" data-scroll-target="#what-about-tensors">What about Tensors?</a></li>
+  <li><a href="#concrete-example-building-a-convolutional-kernel-from-scratch" id="toc-concrete-example-building-a-convolutional-kernel-from-scratch" class="nav-link" data-scroll-target="#concrete-example-building-a-convolutional-kernel-from-scratch">Concrete Example: Building a Convolutional Kernel from Scratch</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
-    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(2)</span></div></div></div>
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar zindex-bottom">
+    </div>
 <!-- main -->
-<main class="content quarto-banner-title-block column-page-left" id="quarto-document-content">
+<main class="content quarto-banner-title-block" id="quarto-document-content">
 
 
 
 
 
-
-
-
-
-<div class="quarto-listing quarto-listing-container-default" id="listing-listing">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-listing-date-sort="1754280000000" data-listing-file-modified-sort="1754595509464" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="559">
-<div class="thumbnail"><a href="./posts/dissection-array/index.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/dissection-array/index.html" class="no-external">Dissection of a Tensor</a>
-</h3>
-<div class="delink listing-description"><a href="./posts/dissection-array/index.html" class="no-external">
-Before going through what is an array and why they are so much used in Computer Science or Machine Learning, we will have to do a quick excursus into how variables are…
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/dissection-array/index.html" class="no-external">
-<div class="listing-date">
-Aug 4, 2025
-</div>
-</a>
+<section id="introduction-what-is-it-an-array" class="level2">
+<h2 class="anchored" data-anchor-id="introduction-what-is-it-an-array">Introduction: What Is It an Array?</h2>
+<p>Before going through what is an array and why they are so much used in Computer Science or Machine Learning, we will have to do a quick excursus into how variables are stored in memory.</p>
+<p>When we declare a variable, that variable will be stored into the RAM (random access memory) of our computer. From this moment that variable, let’s say <span class="math inline">\(x\)</span> will have an address that will point to that memory location, a variable that stores the address of another one is called <em>pointer</em>.</p>
+<div id="3d0e7ed7" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0x102a23010</code></pre>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-listing-date-sort="1752724800000" data-listing-file-modified-sort="1754312265553" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1953">
-<div class="thumbnail"><a href="./posts/attention-einsum/index.html" class="no-external">
+<p>Here we have assigned the value <span class="math inline">\(4\)</span> to the variable x, what we will have is:</p>
+<ul>
+<li>Id: it is the unique identity of that variable</li>
+<li>Hexadecimal address: where that variable is located</li>
+</ul>
+<p>The address is represented in hexadecimal format with 0-9 and A-F where each byte has an address. For example a two digit number as a limit of FF or 255 in decimal system which is the same as 8 bits in binary.</p>
+<p>We can see that if we copy a variable to another one, the new one is basically a pointer to the old address. However, if a different variable is initialized with the same value as <span class="math inline">\(x\)</span>, they will have a different address</p>
+<div id="5a262b47" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> x</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">id</span>(y)<span class="op">==</span><span class="bu">id</span>(x))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(y)) <span class="op">==</span> <span class="bu">hex</span>(<span class="bu">id</span>(x)))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>z<span class="op">=</span><span class="dv">4</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(x)) <span class="op">==</span> <span class="bu">hex</span>(<span class="bu">id</span>(z)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True
+True
+True</code></pre>
+</div>
+</div>
+<section id="what-about-arrays" class="level3">
+<h3 class="anchored" data-anchor-id="what-about-arrays">What about Arrays</h3>
+<p>Arrays are objects composed of elements of the same type and stored in continuous memory cells (homoguous memory). Computationally speaking they are more efficient than lists as we can access their elements just by using the location as a single pointer, since the first element will define the memory location of the others, while lists have a different pointer for each element.</p>
+<div id="e92ce0e2" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Python list and a NumPy array with the same content</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>py_list <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>np_array <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Python list memory addresses:"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, item <span class="kw">in</span> <span class="bu">enumerate</span>(py_list):</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Element </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: value=</span><span class="sc">{</span>item<span class="sc">}</span><span class="ss">, address=</span><span class="sc">{</span><span class="bu">id</span>(item)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">NumPy array memory layout:"</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Base address of array: </span><span class="sc">{</span>np_array<span class="sc">.</span>__array_interface__[<span class="st">'data'</span>][<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"  Item size in bytes:"</span>, np_array.itemsize)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(np_array)):</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    address <span class="op">=</span> np_array.__array_interface__[<span class="st">'data'</span>][<span class="dv">0</span>] <span class="op">+</span> i <span class="op">*</span> np_array.itemsize</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Element </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: value=</span><span class="sc">{</span>np_array[i]<span class="sc">}</span><span class="ss">, address=</span><span class="sc">{</span>address<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Total memory used by list elements:"</span>, <span class="bu">sum</span>(sys.getsizeof(x) <span class="cf">for</span> x <span class="kw">in</span> py_list))</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Total memory used by NumPy array:"</span>, np_array.nbytes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Python list memory addresses:
+  Element 0: value=1, address=4339150768
+  Element 1: value=2, address=4339150800
+  Element 2: value=3, address=4339150832
+  Element 3: value=4, address=4339150864
+  Element 4: value=5, address=4339150896
 
-<img loading="lazy" src="./posts/attention-einsum/images/overview_transformer.png" class="thumbnail-image">
+NumPy array memory layout:
+  Base address of array: 105553160355888
+  Item size in bytes: 8
+  Element 0: value=1, address=105553160355888
+  Element 1: value=2, address=105553160355896
+  Element 2: value=3, address=105553160355904
+  Element 3: value=4, address=105553160355912
+  Element 4: value=5, address=105553160355920
 
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="./posts/attention-einsum/index.html" class="no-external">Why Attention Is All You Need?</a>
-</h3>
-<div class="delink listing-description"><a href="./posts/attention-einsum/index.html" class="no-external">
-The attention mechanism is arguably one of the most impactful innovations in the field of machine learning, if not the most. Its influence has extended beyond computer…<span class="math inline"></span>
-</a></div>
-</div>
-<div class="metadata">
-<a href="./posts/attention-einsum/index.html" class="no-external">
-<div class="listing-date">
-Jul 17, 2025
-</div>
-</a>
+Total memory used by list elements: 140
+Total memory used by NumPy array: 40</code></pre>
 </div>
 </div>
+<p>Here we have print the number of bytes needed to store the list or the array and we can see the difference.</p>
+</section>
+<section id="an-important-property-of-arrays-strided-view" class="level3">
+<h3 class="anchored" data-anchor-id="an-important-property-of-arrays-strided-view">An Important Property of Arrays: Strided View</h3>
+<p>Now we have seen how arrays are stored and why it is more efficient than other data structure, it is important to discuss about a cool application of their continguous memory: the a strided representation.</p>
+<p>Basically, each array <span class="math inline">\(n\)</span> of shape <span class="math inline">\((I, J)\)</span> will be stored in memory as a continuous sequence of number, its elements, and the shape will just clarify how to view the array.</p>
+<p>Basically we can define a view of our array as a final shape and an number of elements in the line before moving to the next row, column, called strides and expressed in bits (8 bits for example).</p>
+<div id="b1baec56" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">6</span>).reshape((<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x.strides)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[0 1 2]
+ [3 4 5]]
+(24, 8)</code></pre>
 </div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div></main> <!-- /main -->
+</div>
+<p>Here we have defined a two dimensional array that has to move 24 bits before changing row and 8 bits before changing column. With this information we can change the view just by changing the shape and the stride view:</p>
+<div id="fd8ebc0b" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>new_shape <span class="op">=</span> (<span class="dv">3</span>, <span class="dv">2</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>new_stride <span class="op">=</span> (<span class="dv">16</span>, <span class="dv">8</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>new_x <span class="op">=</span> np.lib.stride_tricks.as_strided(x, new_shape, new_stride)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(new_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[0 1]
+ [2 3]
+ [4 5]]</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="what-about-tensors" class="level2">
+<h2 class="anchored" data-anchor-id="what-about-tensors">What about Tensors?</h2>
+</section>
+<section id="concrete-example-building-a-convolutional-kernel-from-scratch" class="level2">
+<h2 class="anchored" data-anchor-id="concrete-example-building-a-convolutional-kernel-from-scratch">Concrete Example: Building a Convolutional Kernel from Scratch</h2>
+
+
+</section>
+
+</main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
   window.document.addEventListener("DOMContentLoaded", function (event) {
     const icon = "";

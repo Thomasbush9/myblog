@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/dissection-array/index.html",
       "/posts/attention-einsum/index.html"
     ]
   }

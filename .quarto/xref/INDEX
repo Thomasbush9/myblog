@@ -16,5 +16,8 @@
   },
   "posts/attention-einsum/index.qmd": {
     "index.html": "a6ff814c"
+  },
+  "posts/dissection-array/index.qmd": {
+    "index.html": "70ef8f8d"
   }
 }
