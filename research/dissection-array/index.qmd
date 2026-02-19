@@ -4,6 +4,7 @@ date: 2025-08-04
 toc: true
 toc-title: "Table of Contents"
 toc-location: left
+categories: [research, ml-basics, tensors]
 ---
 
 ## Introduction: What Is It an Array?
