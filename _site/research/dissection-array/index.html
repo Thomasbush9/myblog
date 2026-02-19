@@ -246,9 +246,12 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="introduction-what-is-it-an-array">Introduction: What Is It an Array?</h2>
 <p>Before going through what is an array and why they are so much used in Computer Science or Machine Learning, we will have to do a quick excursus into how variables are stored in memory.</p>
 <p>When we declare a variable, that variable will be stored into the RAM (random access memory) of our computer. From this moment that variable, let’s say <span class="math inline">\(x\)</span> will have an address that will point to that memory location, a variable that stores the address of another one is called <em>pointer</em>.</p>
-<div id="9244b33f" class="cell">
+<div id="65fb118f" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>0x1050a62c8</code></pre>
+</div>
 </div>
 <p>Here we have assigned the value <span class="math inline">\(4\)</span> to the variable x, what we will have is:</p>
 <ul>
@@ -257,38 +260,63 @@ window.Quarto = {
 </ul>
 <p>The address is represented in hexadecimal format with 0-9 and A-F where each byte has an address. For example a two digit number as a limit of FF or 255 in decimal system which is the same as 8 bits in binary.</p>
 <p>We can see that if we copy a variable to another one, the new one is basically a pointer to the old address. However, if a different variable is initialized with the same value as <span class="math inline">\(x\)</span>, they will have a different address</p>
-<div id="6d786512" class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> x</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">id</span>(y)<span class="op">==</span><span class="bu">id</span>(x))</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(y)) <span class="op">==</span> <span class="bu">hex</span>(<span class="bu">id</span>(x)))</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>z<span class="op">=</span><span class="dv">4</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(x)) <span class="op">==</span> <span class="bu">hex</span>(<span class="bu">id</span>(z)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="f8d1e115" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> x</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">id</span>(y)<span class="op">==</span><span class="bu">id</span>(x))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(y)) <span class="op">==</span> <span class="bu">hex</span>(<span class="bu">id</span>(x)))</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>z<span class="op">=</span><span class="dv">4</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(x)) <span class="op">==</span> <span class="bu">hex</span>(<span class="bu">id</span>(z)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>True
+True
+True</code></pre>
+</div>
 </div>
 <section id="what-about-arrays" class="level3">
 <h3 class="anchored" data-anchor-id="what-about-arrays">What about Arrays</h3>
 <p>Arrays are objects composed of elements of the same type and stored in continuous memory cells (homoguous memory). Computationally speaking they are more efficient than lists as we can access their elements just by using the location as a single pointer, since the first element will define the memory location of the others, while lists have a different pointer for each element.</p>
-<div id="13e32d96" class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Python list and a NumPy array with the same content</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>py_list <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]</span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>np_array <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Python list memory addresses:"</span>)</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, item <span class="kw">in</span> <span class="bu">enumerate</span>(py_list):</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Element </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: value=</span><span class="sc">{</span>item<span class="sc">}</span><span class="ss">, address=</span><span class="sc">{</span><span class="bu">id</span>(item)<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">NumPy array memory layout:"</span>)</span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Base address of array: </span><span class="sc">{</span>np_array<span class="sc">.</span>__array_interface__[<span class="st">'data'</span>][<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"  Item size in bytes:"</span>, np_array.itemsize)</span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(np_array)):</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    address <span class="op">=</span> np_array.__array_interface__[<span class="st">'data'</span>][<span class="dv">0</span>] <span class="op">+</span> i <span class="op">*</span> np_array.itemsize</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Element </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: value=</span><span class="sc">{</span>np_array[i]<span class="sc">}</span><span class="ss">, address=</span><span class="sc">{</span>address<span class="sc">}</span><span class="ss">"</span>)</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Total memory used by list elements:"</span>, <span class="bu">sum</span>(sys.getsizeof(x) <span class="cf">for</span> x <span class="kw">in</span> py_list))</span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Total memory used by NumPy array:"</span>, np_array.nbytes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="59f4b91b" class="cell" data-execution_count="3">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a Python list and a NumPy array with the same content</span></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>py_list <span class="op">=</span> [<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>]</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>np_array <span class="op">=</span> np.array([<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">5</span>])</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Python list memory addresses:"</span>)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i, item <span class="kw">in</span> <span class="bu">enumerate</span>(py_list):</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Element </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: value=</span><span class="sc">{</span>item<span class="sc">}</span><span class="ss">, address=</span><span class="sc">{</span><span class="bu">id</span>(item)<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">NumPy array memory layout:"</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="ss">f"  Base address of array: </span><span class="sc">{</span>np_array<span class="sc">.</span>__array_interface__[<span class="st">'data'</span>][<span class="dv">0</span>]<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"  Item size in bytes:"</span>, np_array.itemsize)</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">len</span>(np_array)):</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    address <span class="op">=</span> np_array.__array_interface__[<span class="st">'data'</span>][<span class="dv">0</span>] <span class="op">+</span> i <span class="op">*</span> np_array.itemsize</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"  Element </span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">: value=</span><span class="sc">{</span>np_array[i]<span class="sc">}</span><span class="ss">, address=</span><span class="sc">{</span>address<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"</span><span class="ch">\n</span><span class="st">Total memory used by list elements:"</span>, <span class="bu">sum</span>(sys.getsizeof(x) <span class="cf">for</span> x <span class="kw">in</span> py_list))</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Total memory used by NumPy array:"</span>, np_array.nbytes)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Python list memory addresses:
+  Element 0: value=1, address=4379533928
+  Element 1: value=2, address=4379533960
+  Element 2: value=3, address=4379533992
+  Element 3: value=4, address=4379534024
+  Element 4: value=5, address=4379534056
+
+NumPy array memory layout:
+  Base address of array: 105553164846352
+  Item size in bytes: 8
+  Element 0: value=1, address=105553164846352
+  Element 1: value=2, address=105553164846360
+  Element 2: value=3, address=105553164846368
+  Element 3: value=4, address=105553164846376
+  Element 4: value=5, address=105553164846384
+
+Total memory used by list elements: 140
+Total memory used by NumPy array: 40</code></pre>
+</div>
 </div>
 <p>Here we have print the number of bytes needed to store the list or the array and we can see the difference.</p>
 </section>
@@ -297,25 +325,38 @@ window.Quarto = {
 <p>Now we have seen how arrays are stored and why it is more efficient than other data structure, it is important to discuss about a cool application of their continguous memory: the a strided representation.</p>
 <p>Basically, each array <span class="math inline">\(n\)</span> of shape <span class="math inline">\((I, J)\)</span> will be stored in memory as a continuous sequence of number, its elements, and the shape will just clarify how to view the array.</p>
 <p>Basically we can define a view of our array as a final shape and an number of elements in the line before moving to the next row, column, called strides and expressed in bits (8 bits for example).</p>
-<div id="bdf23616" class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">6</span>).reshape((<span class="dv">2</span>, <span class="dv">3</span>))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x)</span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x.strides)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="93993ec1" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">6</span>).reshape((<span class="dv">2</span>, <span class="dv">3</span>))</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x.strides)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[0 1 2]
+ [3 4 5]]
+(24, 8)</code></pre>
+</div>
 </div>
 <p>Here we have defined a two dimensional array that has to move 24 bits before changing row and 8 bits before changing column. With this information we can change the view just by changing the shape and the stride view:</p>
-<div id="bae27b71" class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>new_shape <span class="op">=</span> (<span class="dv">3</span>, <span class="dv">2</span>)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>new_stride <span class="op">=</span> (<span class="dv">16</span>, <span class="dv">8</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>new_x <span class="op">=</span> np.lib.stride_tricks.as_strided(x, new_shape, new_stride)</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(new_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="8faa67fa" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>new_shape <span class="op">=</span> (<span class="dv">3</span>, <span class="dv">2</span>)</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>new_stride <span class="op">=</span> (<span class="dv">16</span>, <span class="dv">8</span>)</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>new_x <span class="op">=</span> np.lib.stride_tricks.as_strided(x, new_shape, new_stride)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(new_x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[[0 1]
+ [2 3]
+ [4 5]]</code></pre>
+</div>
 </div>
 <p>We are saying to move just two numbers before going to the next row and we have defined the final shape to have one more row and one less column.</p>
 <p>Another important technique that arrays allow us to implement is to generate a bigger array just by tiling a smaller one with the <em>tile</em> operation.</p>
-<div id="68600024" class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.eye(<span class="dv">9</span>)</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>num_rep <span class="op">=</span> (<span class="dv">3</span>, <span class="dv">3</span>)</span>
-<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>x_tiled <span class="op">=</span> np.tile(x, num_rep)</span>
-<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x_tiled.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="2a914de0" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.eye(<span class="dv">9</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>num_rep <span class="op">=</span> (<span class="dv">3</span>, <span class="dv">3</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>x_tiled <span class="op">=</span> np.tile(x, num_rep)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x_tiled.shape)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>(27, 27)</code></pre>
+</div>
 </div>
 <p>Here we have repeated the identity matrix 3 times on the rows and 3 times in the columns.</p>
 <p>All these operations are at the core of many machine learning architectures such as convolutional neural networks (CNNs), which we will implement in the last section of this post.</p>
@@ -326,14 +367,17 @@ window.Quarto = {
 <p>Tensors are the main datatype used by the most used ML library: PyTorch. Mathematically, tensors are any scalar, vector or matrices and we can say that they are the same as arrays (the computer science name for them). The main difference between NumPy’s arrays and Torch’s tensors is the implementation.</p>
 <p>Specifically to ML, tensors are implemented in a way by which they support autograd and in this way backpropagation, the key concept for training a ML system, to read more about the implementation of backprop and autograd I suggest you the first lecture of the YouTube course from Karpathy here (add link).</p>
 <p>If you don’t have time to do the course, very briefly, every time you perform an operation between two tensors, torch will compute a computational graph that can be use to calculate the gradient relative to that tensor.</p>
-<div id="b06496dd" class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> torch.tensor(<span class="fl">2.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> a<span class="op">**</span><span class="dv">2</span></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>y.backward()</span>
-<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a.grad.item())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div id="99f8a183" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> torch.tensor(<span class="fl">2.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> a<span class="op">**</span><span class="dv">2</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>y.backward()</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(a.grad.item())</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>4.0</code></pre>
+</div>
 </div>
 <p>In this way torch is able to compute the first derivative automatically if we specify that we want the gradient. Then the gradient is used to update the weights of the network depending on how the influence the loss.</p>
 <p>Concretely, this is achieved by defining a class method for each operation between tensors that allows you to save the numerical derivative for that tensor, and when you call the <em>backward()</em> method you simply compute the chain rule relative to that tensor.</p>

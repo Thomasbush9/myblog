@@ -39,6 +39,16 @@ body {
   line-height: 1.6;
 }
 
+/* Improve contrast for main content */
+.quarto-container {
+  color: var(--ctp-text) !important;
+}
+
+/* Ensure paragraph text has good contrast */
+p {
+  color: var(--ctp-text) !important;
+}
+
 /* Headers */
 h1, h2, h3, h4, h5, h6 {
   color: var(--ctp-lavender);
@@ -126,7 +136,7 @@ pre, code {
   font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace !important;
 }
 
-code {
+code:not(pre code) {
   background-color: var(--ctp-surface1) !important;
   color: var(--ctp-text) !important;
   padding: 0.2em 0.4em !important;
@@ -137,6 +147,74 @@ pre {
   background-color: var(--ctp-mantle) !important;
   border: 1px solid var(--ctp-surface1) !important;
   border-radius: 4px !important;
+}
+
+pre code {
+  background-color: transparent !important;
+  color: var(--ctp-text) !important;
+  padding: 0 !important;
+}
+
+/* Jupyter cell styling for better visibility */
+.cell-output pre {
+  background-color: var(--ctp-crust) !important;
+  border: 1px solid var(--ctp-surface0) !important;
+}
+
+.cell-output .code {
+  background-color: var(--ctp-crust) !important;
+  color: var(--ctp-text) !important;
+}
+
+/* Make inline code more visible */
+.cell .sourceCode {
+  background-color: var(--ctp-surface1) !important;
+  color: var(--ctp-text) !important;
+}
+
+/* Output styling */
+.cell-output .output {
+  color: var(--ctp-text) !important;
+}
+
+/* Style code cells to be more visible */
+.cell {
+  margin: 1em 0;
+}
+
+/* Input cells - make them clearly visible */
+.cell .sourceCode {
+  background-color: var(--ctp-surface1) !important;
+  border: 1px solid var(--ctp-surface2) !important;
+  border-radius: 4px !important;
+  padding: 0.5em !important;
+}
+
+/* Output cells */
+.cell-output {
+  background-color: var(--ctp-crust) !important;
+  border: 1px solid var(--ctp-surface0) !important;
+  border-radius: 4px !important;
+  margin-top: 0.5em !important;
+  padding: 0.5em !important;
+}
+
+/* Make code visible inside cells */
+.cell-output pre {
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--ctp-text) !important;
+}
+
+/* Jupyter-specific styling */
+div.cell-output-display {
+  background-color: var(--ctp-crust) !important;
+  color: var(--ctp-text) !important;
+}
+
+/* Ensure all code is visible */
+.cell div[class*="highlight"] {
+  background-color: var(--ctp-surface1) !important;
 }
 
 /* Tables */

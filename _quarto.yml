@@ -18,7 +18,7 @@ website:
       - icon: github
         href: https://github.com/Thomasbush9
       - icon: file-person
-        href: /cv/ThomasBush_CV.pdf
+        href: cv/ThomasBush_CV.pdf
   search:
     location: navbar
     type: overlay

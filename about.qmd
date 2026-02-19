@@ -20,7 +20,7 @@ about:
       href: https://github.com/Thomasbush9
     - icon: file
       text: Download CV
-      href: /cv/ThomasBush_CV.pdf
+      href: cv/ThomasBush_CV.pdf
     - icon: envelope
       text: Email
       href: mailto:thomasbush52@gmail.com
