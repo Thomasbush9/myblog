@@ -721,3 +721,32 @@ pre code {
   font-size: 0.9rem !important;
   line-height: 1.5 !important;
 }
+
+
+/* FIX: MathJax SVG overlay issues */
+mjx-container {
+  position: relative !important;
+  z-index: 1 !important;
+  display: inline-block !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+}
+
+mjx-container svg {
+  position: relative !important;
+  z-index: 1 !important;
+  max-width: 100% !important;
+}
+
+/* MathJax display mode should not overlap */
+mjx-container[jax="SVG"][display="true"] {
+  display: block !important;
+  margin: 1rem 0 !important;
+  position: relative !important;
+}
+
+/* Prevent MathJax from creating stacking contexts that overlay */
+.MathJax, .MathJax_Display {
+  position: relative !important;
+  z-index: 1 !important;
+}

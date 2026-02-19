@@ -303,9 +303,9 @@ def generate_post_page(post, output_dir):
             img_path = f"{post['section']}_{post['slug']}_images/{img_path[7:]}"
         cover_image_html = f'<div class="post-cover"><img src="{img_path}" alt="Cover image"></div>'
     
-    # Generate TOC if enabled
+    # Generate TOC if enabled - DISABLED to fix overlay
     toc_html = ""
-    if post["frontmatter"].get("toc", False):
+    if False and post["frontmatter"].get("toc", False):
         headers = re.findall(r"<h([1-4])>([^<]+)</h\1>", html_content)
         headers = [(level, text.strip()) for level, text in headers]
         post_title = post["title"]
