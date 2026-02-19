@@ -406,3 +406,160 @@ a, a:link, a:visited, a:hover, a:active {
 [style] {
   color: var(--ctp-text) !important;
 }
+/* ====================================
+   CATPPUCCIN TUI THEME ENHANCEMENTS
+   ==================================== */
+
+/* Terminal-style glow effects */
+.navbar, .listing-item:hover, .card:hover {
+  box-shadow: 0 0 15px rgba(137, 180, 250, 0.25) !important;
+  transition: all 0.3s ease !important;
+}
+
+/* CRT-style text glow for headings */
+h1, h2, h3, h4, h5, h6 {
+  text-shadow: 0 0 10px rgba(180, 190, 254, 0.3) !important;
+}
+
+/* Pulsing effect for active nav links */
+.navbar-nav .nav-link.active {
+  animation: pulse 2s infinite !important;
+}
+
+@keyframes pulse {
+  0% { border-color: var(--ctp-sky); }
+  50% { border-color: var(--ctp-sapphire); }
+  100% { border-color: var(--ctp-sky); }
+}
+
+/* Matrix-style code rain background effect for code blocks */
+.sourceCode, pre {
+  position: relative !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, 
+    var(--ctp-surface1) 0%, 
+    var(--ctp-surface0) 50%, 
+    var(--ctp-surface1) 100%) !important;
+}
+
+.sourceCode::before {
+  content: "" !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: 
+    linear-gradient(90deg, transparent 50%, rgba(137, 180, 250, 0.03) 50%) !important;
+  background-size: 4px 4px !important;
+  pointer-events: none !important;
+  z-index: 0 !important;
+}
+
+.sourceCode code {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Retro terminal green for comments in code */
+.sourceCode span.co {
+  color: var(--ctp-green) !important;
+  font-style: italic !important;
+}
+
+/* Bright cyan for keywords */
+.sourceCode span.kw {
+  color: var(--ctp-sky) !important;
+  font-weight: bold !important;
+}
+
+/* Lavender for strings */
+.sourceCode span.st {
+  color: var(--ctp-lavender) !important;
+}
+
+/* Peach for numbers */
+.sourceCode span.dv, .sourceCode span.bn, .sourceCode span.fl {
+  color: var(--ctp-peach) !important;
+}
+
+/* Mauve for functions */
+.sourceCode span.fu {
+  color: var(--ctp-mauve) !important;
+}
+
+/* Subtle scanline effect */
+body::after {
+  content: "" !important;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(180, 190, 254, 0.03) 1px,
+      rgba(180, 190, 254, 0.03) 2px
+    ) !important;
+  pointer-events: none !important;
+  z-index: 9999 !important;
+}
+
+/* TUI-style selection highlight */
+::selection {
+  background-color: var(--ctp-surface2) !important;
+  color: var(--ctp-text) !important;
+}
+
+/* Make category badges look like terminal tags */
+.listing-category {
+  background-color: var(--ctp-surface1) !important;
+  border: 1px solid var(--ctp-blue) !important;
+  box-shadow: 0 0 5px rgba(137, 180, 250, 0.5) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+  font-size: 0.75em !important;
+}
+
+/* Add glow to links on hover */
+a:hover {
+  text-shadow: 0 0 8px var(--ctp-sky) !important;
+  text-decoration: none !important;
+}
+
+/* Terminal cursor effect for active elements */
+button:focus, .btn:focus, .nav-link:focus {
+  outline: 2px solid var(--ctp-sky) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 10px var(--ctp-sky) !important;
+}
+
+/* Make the whole site feel like a terminal */
+.quarto-container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 20px !important;
+  background-color: var(--ctp-base) !important;
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.5) !important;
+  border: 1px solid var(--ctp-surface0) !important;
+}
+
+/* Status bar at bottom */
+footer {
+  background-color: var(--ctp-mantle) !important;
+  border-top: 1px solid var(--ctp-blue) !important;
+  padding: 10px !important;
+  text-align: center !important;
+  font-family: 'JetBrains Mono', monospace !important;
+  position: relative !important;
+}
+
+footer::before {
+  content: "♥ Built with Quarto + Catppuccin" !important;
+  color: var(--ctp-pink) !important;
+  display: block !important;
+  margin-bottom: 5px !important;
+}
