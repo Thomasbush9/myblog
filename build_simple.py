@@ -241,7 +241,54 @@ def generate_html_layout(title, content, page_type='post'):
     if page_type in ['home', 'listing']:
         search_html = '''\n        <div class="search-box">\n          <input type="text" id="search-input" placeholder="Search posts..." />\n        </div>\n        '''
     
-    return f'''<!DOCTYPE html>\n<html lang="en" data-theme="dark">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>{title}</title>\n    <link rel="stylesheet" href="styles.css">\n    <style>\n        .search-box {{\n            margin: 2rem 0;\n            text-align: center;\n        }}\n        .search-box input {{\n            padding: 0.75rem 1rem;\n            border: 1px solid #45475a;\n            background: #181825;\n            color: #cdd6f4;\n            border-radius: 6px;\n            font-family: inherit;\n            width: 100%;\n            max-width: 500px;\n            font-size: 1rem;\n        }}\n        .search-box input:focus {{\n            outline: none;\n            border-color: #89dceb;\n            box-shadow: 0 0 0 2px rgba(137, 220, 235, 0.2);\n        }}\n        .post-item {{\n            display: flex;\n            flex-direction: column;\n            margin-bottom: 2.5rem;\n            padding-bottom: 1.5rem;\n            border-bottom: 1px solid #313244;\n        }}\n        .post-item:last-child {{\n            border-bottom: none;\n        }}\n        .post-title {{\n            margin-bottom: 0.5rem;\n        }}\n        .post-title a {{\n            color: #89b4fa;\n            font-size: 1.5rem;\n            font-weight: 600;\n            text-decoration: none;\n        }}\n        .post-title a:hover {{\n            color: #94e2d5;\n            text-decoration: underline;\n        }}\n        .post-meta {{\n            color: #a6adc8;\n            font-size: 0.9rem;\n            margin-bottom: 0.75rem;\n        }}\n        .post-categories {{\n            margin-bottom: 0.5rem;\n        }}\n        .post-categories span {{\n            display: inline-block;\n            background: #45475a;\n            color: #bac2de;\n            padding: 0.25rem 0.5rem;\n            border-radius: 4px;\n            font-size: 0.8rem;\n            margin-right: 0.5rem;\n        }}\n        .post-description {{\n            color: #cdd6f4;\n            margin-top: 0.75rem;\n            line-height: 1.5;\n        }}\n        nav {{\n            background: #181825;\n            padding: 1rem 0;\n            margin-bottom: 2rem;\n            border-bottom: 1px solid #313244;\n        }}\n        nav ul {{\n            list-style: none;\n            display: flex;\n            gap: 2rem;\n            justify-content: center;\n            margin: 0;\n            padding: 0;\n        }}\n        nav a {{\n            color: #cdd6f4;\n            text-decoration: none;\n            font-weight: 500;\n            padding: 0.5rem 1rem;\n            border-radius: 4px;\n            transition: all 0.2s ease;\n        }}\n        nav a:hover {{\n            background: #313244;\n            color: #89dceb;\n        }}\n        .container {{\n            max-width: 900px;\n            margin: 0 auto;\n            padding: 0 1rem;\n        }}\n        .about-profile {{\n            text-align: center;\n            margin-bottom: 2rem;\n        }}\n        .about-profile img {{\n            border-radius: 50%;\n            width: 200px;\n            height: 200px;\n            object-fit: cover;\n            border: 3px solid #45475a;\n            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n        }}\n        .social-links {{\n            text-align: center;\n            margin-top: 2rem;\n        }}\n        .social-links a {{\n            display: inline-block;\n            margin: 0 1rem;\n            color: #89dceb;\n            text-decoration: none;\n            font-weight: 500;\n        }}\n        .social-links a:hover {{\n            color: #94e2d5;\n        }}\n        pre {{\n            background: #181825;\n            border: 1px solid #313244;\n            border-radius: 6px;\n            padding: 1rem;\n            overflow-x: auto;\n            margin-bottom: 1.5rem;\n        }}\n        code {{\n            background: #313244;\n            padding: 0.2rem 0.4rem;\n            border-radius: 3px;\n            font-family: \'JetBrains Mono\', monospace;\n            font-size: 0.9rem;\n            color: #a6e3a1;\n        }}\n        pre code {{\n            background: none;\n            padding: 0;\n            color: #cdd6f4;\n        }}\n        h1, h2, h3, h4, h5, h6 {{\n            color: #b4befe;\n            margin-top: 2rem;\n            margin-bottom: 1rem;\n            font-weight: 600;\n        }}\n        h1 {{ font-size: 2.2rem; }}\n        h2 {{ font-size: 1.8rem; }}\n        h3 {{ font-size: 1.5rem; }}\n        a {{\n            color: #89dceb;\n        }}\n        a:hover {{\n            color: #94e2d5;\n            text-decoration: underline;\n        }}\n        body {{\n            background: #1e1e2e;\n            color: #cdd6f4;\n            font-family: \'JetBrains Mono\', \'Monaco\', \'Consolas\', monospace;\n            line-height: 1.6;\n            margin: 0;\n            padding: 0;\n        }}\n        .hidden {{\n            display: none !important;\n        }}\n        article h1 {{\n            color: #b4befe;\n            border-bottom: 2px solid #313244;\n            padding-bottom: 0.5rem;\n            margin-bottom: 1.5rem;\n        }}\n    </style>\n</head>\n<body>\n    <nav>\n        <div class="container">\n            <ul>\n                {nav_html}\n            </ul>\n        </div>\n    </nav>\n    \n    <div class="container">\n        {search_html}\n        <main>\n            {content}\n        </main>\n    </div>\n    \n    <script src="search.js"></script>\n</body>\n</html>\n'''
+    return f'''<!DOCTYPE html>\n<html lang="en" data-theme="dark">\n<head>\n    <meta charset="UTF-8">\n    <meta name="viewport" content="width=device-width, initial-scale=1.0">\n    <title>{title}</title>\n    <link rel="stylesheet" href="styles.css">\n    <style>\n        .search-box {{\n            margin: 2rem 0;\n            text-align: center;\n        }}\n        .search-box input {{\n            padding: 0.75rem 1rem;\n            border: 1px solid #45475a;\n            background: #181825;\n            color: #cdd6f4;\n            border-radius: 6px;\n            font-family: inherit;\n            width: 100%;\n            max-width: 500px;\n            font-size: 1rem;\n        }}\n        .search-box input:focus {{\n            outline: none;\n            border-color: #89dceb;\n            box-shadow: 0 0 0 2px rgba(137, 220, 235, 0.2);\n        }}\n        .post-item {{\n            display: flex;\n            flex-direction: column;\n            margin-bottom: 2.5rem;\n            padding-bottom: 1.5rem;\n            border-bottom: 1px solid #313244;\n        }}\n        .post-item:last-child {{\n            border-bottom: none;\n        }}\n        .post-title {{\n            margin-bottom: 0.5rem;\n        }}\n        .post-title a {{\n            color: #89b4fa;\n            font-size: 1.5rem;\n            font-weight: 600;\n            text-decoration: none;\n        }}\n        .post-title a:hover {{\n            color: #94e2d5;\n            text-decoration: underline;\n        }}\n        .post-meta {{\n            color: #a6adc8;\n            font-size: 0.9rem;\n            margin-bottom: 0.75rem;\n        }}\n        .post-categories {{\n            margin-bottom: 0.5rem;\n        }}\n        .post-categories span {{\n            display: inline-block;\n            background: #45475a;\n            color: #bac2de;\n            padding: 0.25rem 0.5rem;\n            border-radius: 4px;\n            font-size: 0.8rem;\n            margin-right: 0.5rem;\n        }}\n        .post-description {{\n            color: #cdd6f4;\n            margin-top: 0.75rem;\n            line-height: 1.5;\n        }}\n        nav {{\n            background: #181825;\n            padding: 1rem 0;\n            margin-bottom: 2rem;\n            border-bottom: 1px solid #313244;\n        }}\n        nav ul {{\n            list-style: none;\n            display: flex;\n            gap: 2rem;\n            justify-content: center;\n            margin: 0;\n            padding: 0;\n        }}\n        nav a {{\n            color: #cdd6f4;\n            text-decoration: none;\n            font-weight: 500;\n            padding: 0.5rem 1rem;\n            border-radius: 4px;\n            transition: all 0.2s ease;\n        }}\n        nav a:hover {{\n            background: #313244;\n            color: #89dceb;\n        }}\n        .container {{\n            max-width: 900px;\n            margin: 0 auto;\n            padding: 0 1rem;\n        }}\n        .about-profile {{\n            text-align: center;\n            margin-bottom: 2rem;\n        }}\n        .about-profile img {{\n            border-radius: 50%;\n            width: 200px;\n            height: 200px;\n            object-fit: cover;\n            border: 3px solid #45475a;\n            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);\n        }}\n        .social-links {{\n            text-align: center;\n            margin-top: 2rem;\n        }}\n        .social-links a {{\n            display: inline-block;\n            margin: 0 1rem;\n            color: #89dceb;\n            text-decoration: none;\n            font-weight: 500;\n        }}\n        .social-links a:hover {{\n            color: #94e2d5;\n        }}\n        pre {{\n            background: #181825;\n            border: 1px solid #313244;\n            border-radius: 6px;\n            padding: 1rem;\n            overflow-x: auto;\n            margin-bottom: 1.5rem;\n        }}\n        code {{\n            background: #313244;\n            padding: 0.2rem 0.4rem;\n            border-radius: 3px;\n            font-family: \'JetBrains Mono\', monospace;\n            font-size: 0.9rem;\n            color: #a6e3a1;\n        }}\n        pre code {{\n            background: none;\n            padding: 0;\n            color: #cdd6f4;\n        }}\n        h1, h2, h3, h4, h5, h6 {{\n            color: #b4befe;\n            margin-top: 2rem;\n            margin-bottom: 1rem;\n            font-weight: 600;\n        }}\n        h1 {{ font-size: 2.2rem; }}\n        h2 {{ font-size: 1.8rem; }}\n        h3 {{ font-size: 1.5rem; }}\n        a {{\n            color: #89dceb;\n        }}\n        a:hover {{\n            color: #94e2d5;\n            text-decoration: underline;\n        }}\n        body {{\n            background: #1e1e2e;\n            color: #cdd6f4;\n            font-family: \'JetBrains Mono\', \'Monaco\', \'Consolas\', monospace;\n            line-height: 1.6;\n            margin: 0;\n            padding: 0;\n        }}\n        .hidden {{\n            display: none !important;\n        }}\n        .toc li {{
+            margin: 0.25rem 0;
+            line-height: 1.3;
+        }}
+
+        .toc ul {{
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }}
+
+        .toc-title {{
+            color: #89b4fa;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }}
+
+        .toc {{
+            background: #181825;
+            border: 1px solid #313244;
+            border-radius: 6px;
+            padding: 0.75rem 1rem;
+            max-width: 100%;
+            overflow: hidden;
+        }}
+
+        .toc-container {{
+            margin-bottom: 1.5rem;
+            max-width: 100%;
+            overflow-x: hidden;
+        }}
+
+        article h1 {{\n            color: #b4befe;\n            border-bottom: 2px solid #313244;\n            padding-bottom: 0.5rem;\n            margin-bottom: 1.5rem;\n        }}\n    </style>\n</head>\n<body>\n    <nav>\n        <div class="container">\n            <ul>\n                {nav_html}\n            </ul>\n        </div>\n    </nav>\n    \n    <div class="container">\n        {search_html}\n        <main>\n            {content}\n        </main>\n    </div>\n    \n    <script>
+    MathJax = {{
+        tex: {{
+            inlineMath: [['$', '$'], ['\\(', '\\)']],
+            displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }},
+        svg: {{
+            fontCache: 'global'
+        }}
+    }};
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+      src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js">
+    </script>
+    <script src="search.js"></script>\n</body>\n</html>\n'''
 
 def generate_post_page(post, output_dir):
     """Generate individual post page"""
@@ -256,11 +303,37 @@ def generate_post_page(post, output_dir):
             img_path = f"{post['section']}_{post['slug']}_images/{img_path[7:]}"
         cover_image_html = f'<div class="post-cover"><img src="{img_path}" alt="Cover image"></div>'
     
+    # Generate TOC if enabled
+    toc_html = ""
+    if post["frontmatter"].get("toc", False):
+        headers = re.findall(r"<h([1-4])>([^<]+)</h\1>", html_content)
+        headers = [(level, text.strip()) for level, text in headers]
+        post_title = post["title"]
+        headers = [h for h in headers if h[1].lower() != post_title.lower()]
+        if headers:
+            toc_title = post["frontmatter"].get("toc-title", "Table of Contents")
+            toc_location = post["frontmatter"].get("toc-location", "right")
+            toc_items = []
+            for level, text in headers:
+                anchor = re.sub(r"[^a-z0-9-]", "", text.lower().replace(" ", "-"))
+                indent = max(0, int(level) - 2) * 1.25
+                toc_items.append(f'<li class="toc-level-{level}" style="margin-left: {indent}rem"><a href="#{anchor}">{text}</a></li>')
+            toc_html = f"""<aside class="toc-container" data-location="{toc_location}"><div class="toc"><h2 class="toc-title">{toc_title}</h2><ul>{"".join(toc_items)}</ul></div></aside>"""
+            # Add anchors to headers
+            for level, text in headers:
+                anchor = re.sub(r"[^a-z0-9-]", "", text.lower().replace(" ", "-"))
+                html_content = re.sub(
+                    rf"<h{level}>([^<]*){re.escape(text)}([^<]*)</h{level}>",
+                    rf'<h{level} id="{anchor}">\1{text}\2</h{level}>',
+                    html_content, count=1
+                )
+
     cats_html = ', '.join(post['categories']) if post['categories'] else ''
     cats_display = f' | <span class="post-categories">{cats_html}</span>' if cats_html else ''
     
     page_content = f"""
     <article>
+        {toc_html}
         <h1>{post['title']}</h1>
         <div class="post-meta">
             <time>{post['date']}</time>
