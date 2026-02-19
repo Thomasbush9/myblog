@@ -1,0 +1,18 @@
+[
+  {
+    "listing": "/books/index.html",
+    "items": []
+  },
+  {
+    "listing": "/research/index.html",
+    "items": []
+  },
+  {
+    "listing": "/index.html",
+    "items": [
+      "/research/index.html",
+      "/research/dissection-array/index.html",
+      "/research/attention-einsum/index.html"
+    ]
+  }
+]
