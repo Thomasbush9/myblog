@@ -1,0 +1,929 @@
+#!/usr/bin/env python3
+"""
+Simple static site generator for the blog - no external dependencies
+- Reads .qmd and .md files
+- Converts markdown to simple HTML
+- Generates listing pages
+- Preserves Catppuccin styling
+"""
+
+import os
+import re
+import sys
+import shutil
+from datetime import datetime
+from pathlib import Path
+from html import escape
+
+
+def parse_frontmatter(content):
+    """Parse YAML frontmatter from markdown content"""
+    frontmatter = {}
+    body = content
+
+    match = re.match(r"^---\s*\n(.*?)\n---\s*\n(.*)$", content, re.DOTALL)
+    if not match:
+        return frontmatter, body
+
+    yaml_text = match.group(1)
+    body = match.group(2)
+
+    # Simple YAML parser
+    lines = yaml_text.split("\n")
+    i = 0
+    current_array = None
+
+    while i < len(lines):
+        line = lines[i].rstrip()
+        i += 1
+
+        if not line or ":" not in line:
+            continue
+
+        indent = len(line) - len(line.lstrip())
+        line = line.strip()
+
+        # Handle array items
+        if line.startswith("- "):
+            item = line[2:].strip()
+            if current_array is not None:
+                if ":" in item:
+                    # Object in array
+                    obj = {}
+                    k, v = item.split(":", 1)
+                    obj[k.strip()] = v.strip(" '\"")
+                    # Collect rest of object properties
+                    while i < len(lines) and lines[i].startswith(" " * (indent + 2)):
+                        sub_line = lines[i].strip()
+                        if ":" in sub_line:
+                            sk, sv = sub_line.split(":", 1)
+                            obj[sk.strip()] = sv.strip(" '\"")
+                        i += 1
+                    current_array.append(obj)
+                else:
+                    # Simple value
+                    current_array.append(item.strip(" '\""))
+            continue
+
+        # Regular key-value
+        key, value = line.split(":", 1)
+        key = key.strip()
+        value = value.strip()
+
+        # Array syntax: [a, b, c]
+        if value.startswith("[") and value.endswith("]"):
+            items = [
+                v.strip().strip(" ''") for v in value[1:-1].split(",") if v.strip()
+            ]
+            frontmatter[key] = items
+            current_array = items
+        # Nested structure (check if next line is indented)
+        elif (
+            i < len(lines)
+            and lines[i].startswith(" " * (indent + 2))
+            and lines[i].strip().startswith("- ")
+        ):
+            # Array of objects
+            frontmatter[key] = []
+            current_array = frontmatter[key]
+        else:
+            frontmatter[key] = value.strip(" '\"")
+            current_array = None
+
+    return frontmatter, body
+
+
+def md_to_html(md_content):
+    """Convert markdown to simple HTML"""
+    html = md_content
+
+    # Remove Quarto-specific syntax first
+    html = re.sub(r":::\:+\s*\{[^}]*\}\s*
+?", "", html, flags=re.MULTILINE)
+    html = re.sub(r":::\+\s*\{[^}]*\}\s*
+?", "", html, flags=re.MULTILINE)
+    html = re.sub(r"^:::\s*
+", "", html, flags=re.MULTILINE)
+
+    # Code blocks with language
+    html = re.sub(
+        r"```(\w+)
+(.*?)
+```",
+        lambda m: (
+            f'<pre><code class="language-{m.group(1)}">{escape(m.group(2))}</code></pre>'
+        ),
+        html,
+        flags=re.DOTALL,
+    )
+
+    # Code blocks without language
+    html = re.sub(
+        r"```
+(.*?)
+```",
+        lambda m: f"<pre><code>{escape(m.group(1))}</code></pre>",
+        html,
+        flags=re.DOTALL,
+    )
+
+    # Inline code
+    html = re.sub(r"`([^`]+)`", r"<code></code>", html)
+
+    # Headers (h1-h6)
+    for i in range(6, 0, -1):
+        html = re.sub(
+            r"^" + "#" * i + r"\s+(.+)$", f"<h{i}>\1</h{i}>", html, flags=re.MULTILINE
+        )
+
+    # Bold
+    html = re.sub(r"\*\*(.+?)\*\*", r"<strong></strong>", html)
+
+    # Italic
+    html = re.sub(r"\*(.+?)\*", r"<em></em>", html)
+
+    # Images ![alt](url)
+    html = re.sub(
+        r"!\[([^\]]*)\]\(([^\)\s]+)\)(?!\{)",
+        r'<img src="" alt="" class="img-fluid" loading="lazy">',
+        html,
+    )
+    html = re.sub(
+        r"!\[([^\]]*)\]\(([^\)\s]+)\)\{[^}]*width=(\d+)%[^}]*\}",
+        r'<img src="" alt="" class="img-fluid" style="width: %;" loading="lazy">',
+        html,
+    )
+    html = re.sub(
+        r"!\[([^\]]*)\]\(([^\)\s]+)\)\{[^}]*\}",
+        r'<img src="" alt="" class="img-fluid" loading="lazy">',
+        html,
+    )
+
+    # Links [text](url)
+    html = re.sub(r"\[([^\]]+)\]\(([^\)\s]+)\)", r'<a href=""></a>', html)
+
+    # Line breaks and paragraphs
+    paragraphs = re.split(r"
+\s*
+", html)
+    result = []
+    for p in paragraphs:
+        if p.strip():
+            if p.strip().startswith('<h') or p.strip().startswith('<pre>'):
+                result.append(p)
+            else:
+                p = p.replace('
+', '<br>')
+                result.append(f'<p>{p}</p>')
+    html = '
+'.join(result)
+
+    return html
+
+
+def get_all_posts(base_dir):
+    """Get all posts from research and books directories"""
+    posts = []
+
+    for section in ["research", "books"]:
+        section_dir = Path(base_dir) / section
+        if not section_dir.exists():
+            continue
+
+        # Find all qmd files in subdirectories (not index.qmd)
+        for post_dir in section_dir.iterdir():
+            if post_dir.is_dir():
+                post_file = post_dir / "index.qmd"
+                if post_file.exists():
+                    with open(post_file, "r", encoding="utf-8") as f:
+                        content = f.read()
+                        frontmatter, body = parse_frontmatter(content)
+
+                        # Skip if this is the section index
+                        if frontmatter.get("title", "").lower() in [
+                            section,
+                            f"{section.capitalize()}",
+                            "book reviews",
+                        ]:
+                            continue
+
+                        posts.append(
+                            {
+                                "section": section,
+                                "slug": post_dir.name,
+                                "path": post_file,
+                                "frontmatter": frontmatter,
+                                "body": body,
+                                "date": frontmatter.get("date", "2000-01-01"),
+                                "title": frontmatter.get("title", post_dir.name),
+                                "categories": frontmatter.get("categories", []),
+                                "description": frontmatter.get("description", ""),
+                            }
+                        )
+
+    # Sort by date descending
+    posts.sort(key=lambda x: x["date"], reverse=True)
+    return posts
+
+
+# Rest of the file continues...
+
+
+def copy_assets(base_dir, output_dir):
+    """Copy CSS, JS, images, and CV"""
+    output = Path(output_dir)
+    base = Path(base_dir)
+
+    # Copy CSS (use simplified version if available)
+    css_src_simple = base / "styles_simple.css"
+    css_src = base / "styles.css"
+    css_dst = output / "styles.css"
+
+    if css_src_simple.exists():
+        shutil.copy2(css_src_simple, css_dst)
+    elif css_src.exists():
+        shutil.copy2(css_src, css_dst)
+
+    # Copy profile image
+    profile_src = base / "profile.jpg"
+    profile_dst = output / "profile.jpg"
+    if profile_src.exists():
+        shutil.copy2(profile_src, profile_dst)
+
+    # Copy CV
+    cv_src = base / "cv" / "ThomasBush_CV.pdf"
+    cv_dst_dir = output / "cv"
+    cv_dst_dir.mkdir(exist_ok=True)
+    if cv_src.exists():
+        shutil.copy2(cv_src, cv_dst_dir / "ThomasBush_CV.pdf")
+
+    # Copy images from posts
+    for section in ["research", "books"]:
+        section_src = base / section
+        if not section_src.exists():
+            continue
+
+        for post_dir in section_src.iterdir():
+            if post_dir.is_dir() and (post_dir / "images").exists():
+                img_src = post_dir / "images"
+                img_dst = output / f"{section}_{post_dir.name}_images"
+                img_dst.mkdir(parents=True, exist_ok=True)
+                for img in img_src.iterdir():
+                    if img.is_file():
+                        shutil.copy2(img, img_dst / img.name)
+
+
+def generate_html_layout(title, content, page_type="post"):
+    """Generate HTML page with Catppuccin styling"""
+
+    nav_links = [
+        ("index.html", "Home"),
+        ("research.html", "Research"),
+        ("books.html", "Books"),
+        ("about.html", "About"),
+    ]
+
+    nav_html = "\n".join(
+        [
+            f'<li><a href="{href}" class="nav-link">{text}</a></li>'
+            for href, text in nav_links
+        ]
+    )
+
+    # Simple search box for posts
+    search_html = ""
+    if page_type in ["home", "listing"]:
+        search_html = """
+        <div class="search-box">
+          <input type="text" id="search-input" placeholder="Search posts..." />
+        </div>
+        """
+
+    return f"""<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{title}</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Simple search styling */
+        .search-box {{
+            margin: 2rem 0;
+            text-align: center;
+        }}
+        .search-box input {{
+            padding: 0.75rem 1rem;
+            border: 1px solid #45475a;
+            background: #181825;
+            color: #cdd6f4;
+            border-radius: 6px;
+            font-family: inherit;
+            width: 100%;
+            max-width: 500px;
+            font-size: 1rem;
+        }}
+        .search-box input:focus {{
+            outline: none;
+            border-color: #89dceb;
+            box-shadow: 0 0 0 2px rgba(137, 220, 235, 0.2);
+        }}
+        .post-item {{
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 2.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid #313244;
+        }}
+        .post-item:last-child {{
+            border-bottom: none;
+        }}
+        .post-title {{
+            margin-bottom: 0.5rem;
+        }}
+        .post-title a {{
+            color: #89b4fa;
+            font-size: 1.5rem;
+            font-weight: 600;
+            text-decoration: none;
+        }}
+        .post-title a:hover {{
+            color: #94e2d5;
+            text-decoration: underline;
+        }}
+        .post-meta {{
+            color: #a6adc8;
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }}
+        .post-categories {{
+            margin-bottom: 0.5rem;
+        }}
+        .post-categories span {{
+            display: inline-block;
+            background: #45475a;
+            color: #bac2de;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            margin-right: 0.5rem;
+        }}
+        .post-description {{
+            color: #cdd6f4;
+            margin-top: 0.75rem;
+            line-height: 1.5;
+        }}
+        nav {{
+            background: #181825;
+            padding: 1rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid #313244;
+        }}
+        nav ul {{
+            list-style: none;
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }}
+        nav a {{
+            color: #cdd6f4;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }}
+        nav a:hover {{
+            background: #313244;
+            color: #89dceb;
+        }}
+        .container {{
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }}
+        .about-profile {{
+            text-align: center;
+            margin-bottom: 2rem;
+        }}
+        .about-profile img {{
+            border-radius: 50%;
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            border: 3px solid #45475a;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }}
+        .social-links {{
+            text-align: center;
+            margin-top: 2rem;
+        }}
+        .social-links a {{
+            display: inline-block;
+            margin: 0 1rem;
+            color: #89dceb;
+            text-decoration: none;
+            font-weight: 500;
+        }}
+        .social-links a:hover {{
+            color: #94e2d5;
+        }}
+        pre {{
+            background: #181825;
+            border: 1px solid #313244;
+            border-radius: 6px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1.5rem;
+        }}
+        code {{
+            background: #313244;
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: #a6e3a1;
+        }}
+        pre code {{
+            background: none;
+            padding: 0;
+            color: #cdd6f4;
+        }}
+        h1, h2, h3, h4, h5, h6 {{
+            color: #b4befe;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }}
+        h1 {{ font-size: 2.2rem; }}
+        h2 {{ font-size: 1.8rem; }}
+        h3 {{ font-size: 1.5rem; }}
+        a {{
+            color: #89dceb;
+        }}
+        a:hover {{
+            color: #94e2d5;
+            text-decoration: underline;
+        }}
+        body {{
+            background: #1e1e2e;
+            color: #cdd6f4;
+            font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+        }}
+        .hidden {{
+            display: none !important;
+        }}
+        article h1 {{
+            color: #b4befe;
+            border-bottom: 2px solid #313244;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }}
+        /* Tables */
+        table {{
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 1.5rem;
+        }}
+        th, td {{
+            border: 1px solid #45475a;
+            padding: 0.75rem;
+            text-align: left;
+        }}
+        th {{
+            background: #45475a;
+            color: #b4befe;
+            font-weight: 600;
+        }}
+        tr:nth-child(even) {{
+            background: #181825;
+        }}
+        /* Images */
+        img {{
+            max-width: 100%;
+            height: auto;
+            border-radius: 6px;
+        }}
+        /* Homepage header */
+        .site-header {{
+            text-align: center;
+            margin-bottom: 3rem;
+            padding: 2rem 0;
+            border-bottom: 2px solid #313244;
+        }}
+        .site-title {{
+            font-size: 3rem;
+            color: #b4befe;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }}
+        .site-description {{
+            font-size: 1.2rem;
+            color: #a6adc8;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.5;
+        }}
+        /* Post cover images */
+        .post-cover {{
+            margin: 1.5rem 0;
+            text-align: center;
+        }}
+        .post-cover img {{
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }}
+        .post-cover-small {{
+            margin-bottom: 1rem;
+        }}
+        .post-cover-small img {{
+            width: 100%;
+            max-width: 300px;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 6px;
+            display: block;
+        }}
+        .post-item .post-cover-small {{
+            order: -1;
+        }}
+        /* Utility classes */
+        .hidden {{
+            display: none !important;
+        }}
+        .text-center {{
+            text-align: center;
+        }}
+        .mt-1 {{ margin-top: 0.5rem; }}
+        .mt-2 {{ margin-top: 1rem; }}
+        .mt-3 {{ margin-top: 1.5rem; }}
+        .mb-1 {{ margin-bottom: 0.5rem; }}
+        .mb-2 {{ margin-bottom: 1rem; }}
+        .mb-3 {{ margin-bottom: 1.5rem; }}
+        /* Responsive */
+        @media (max-width: 768px) {{
+            body {{
+                font-size: 0.95rem;
+            }}
+            h1 {{ font-size: 1.8rem; }}
+            h2 {{ font-size: 1.5rem; }}
+            h3 {{ font-size: 1.2rem; }}
+            nav ul {{
+                flex-wrap: wrap;
+                gap: 0.5rem;
+            }}
+            nav a {{
+                padding: 0.25rem 0.5rem;
+                font-size: 0.9rem;
+            }}
+            .container {{
+                padding: 0 0.5rem;
+            }}
+            pre {{
+                padding: 0.75rem;
+            }}
+            .about-profile img {{
+                width: 150px;
+                height: 150px;
+            }}
+            .site-title {{
+                font-size: 2rem;
+            }}
+            .site-description {{
+                font-size: 1rem;
+            }}
+            .post-cover-small img {{
+                max-width: 100%;
+            }}
+        }}
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="container">
+            <ul>
+                {nav_html}
+            </ul>
+        </div>
+    </nav>
+    
+    <div class="container">
+        {search_html}
+        <main>
+            {content}
+        </main>
+    </div>
+    
+    <script src="search.js"></script>
+</body>
+</html>
+"""
+
+
+def generate_post_page(post, output_dir):
+    """Generate individual post page"""
+    html_content = md_to_html(post["body"])
+
+    # Update image paths in content
+    # Replace images/ with section_slug_images/
+    html_content = re.sub(
+        rf'src="images/([^"]+)"',
+        f'src="{post["section"]}_{post["slug"]}_images/\\1"',
+        html_content,
+    )
+
+    # Add cover image if present
+    cover_image_html = ""
+    if "image" in post["frontmatter"]:
+        img_path = post["frontmatter"]["image"]
+        if img_path.startswith("images/"):
+            img_path = f"{post['section']}_{post['slug']}_images/{img_path[7:]}"
+        cover_image_html = (
+            f'<div class="post-cover"><img src="{img_path}" alt="Cover image"></div>'
+        )
+
+    cats_html = ", ".join(post["categories"]) if post["categories"] else ""
+    cats_display = (
+        f' | <span class="post-categories">{cats_html}</span>' if cats_html else ""
+    )
+
+    page_content = f"""
+    <article>
+        <h1>{post["title"]}</h1>
+        <div class="post-meta">
+            <time>{post["date"]}</time>
+            {cats_display}
+        </div>
+        {cover_image_html}
+        {html_content}
+    </article>
+    """
+
+    html = generate_html_layout(
+        f"{post['title']} - Thomas W. Bush", page_content, "post"
+    )
+
+    # Write to output
+    output_path = Path(output_dir) / f"{post['section']}_{post['slug']}.html"
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html)
+
+
+def generate_listing(title, posts, output_path, page_type="listing"):
+    """Generate a listing page with category filtering"""
+    # Add header banner for homepage
+    header_html = ""
+    if page_type == "home":
+        header_html = """
+        <div class="site-header">
+            <h1 class="site-title">Thomas W. Bush</h1>
+            <p class="site-description">Research, book reviews, and thoughts on machine learning, neuroscience, and software.</p>
+        </div>
+        """
+
+    # Build category filter dropdown if not homepage
+    filter_html = ""
+    if page_type != "home" and posts:
+        # Get unique categories from these posts
+        categories = sorted(set(cat for post in posts for cat in post["categories"]))
+        if categories:
+            options = ['<option value="">All Categories</option>']
+            for cat in categories:
+                options.append(
+                    f'<option value="{cat}">{cat.replace("-", " ").title()}</option>'
+                )
+
+            filter_html = f"""
+            <div class="category-filter">
+                <label for="category-select">Filter by category:</label>
+                <select id="category-select">
+                    {"".join(options)}
+                </select>
+            </div>
+            """
+
+    posts_html = ""
+
+    for post in posts:
+        post_url = f"{post['section']}_{post['slug']}.html"
+        categories_html = "".join(
+            [f"<span>{cat}</span>" for cat in post["categories"][:3]]
+        )
+
+        desc_attr = post["description"].lower() if post["description"] else ""
+        cats_attr = " ".join(post["categories"])
+
+        # Add cover image if available
+        cover_html = ""
+        if "image" in post["frontmatter"]:
+            img_path = post["frontmatter"]["image"]
+            if img_path.startswith("images/"):
+                img_path = f"{post['section']}_{post['slug']}_images/{img_path[7:]}"
+            cover_html = f'<div class="post-cover-small"><img src="{img_path}" alt="{post["title"]}" loading="lazy"></div>'
+
+        posts_html += f"""
+        <div class="post-item" data-categories="{cats_attr}" data-title="{post["title"].lower()}" data-description="{desc_attr}">
+            {cover_html}
+            <h2 class="post-title"><a href="{post_url}">{post["title"]}</a></h2>
+            <div class="post-meta">
+                <time>{post["date"]}</time>
+            </div>
+            {(f'<div class="post-categories">{categories_html}</div>') if categories_html else ""}
+            {(f'<div class="post-description">{post["description"]}</div>') if post["description"] else ""}
+        </div>
+        """
+
+    page_content = f"""
+    {header_html}
+    <h1>{title}</h1>
+    {filter_html}
+    <div class="post-list">
+        {posts_html}
+    </div>
+    """
+
+    html = generate_html_layout(f"{title} - Thomas W. Bush", page_content, page_type)
+
+    with open(output_path, "w", encoding="utf-8") as f:
+        f.write(html)
+
+
+def generate_about_page(base_dir, output_dir):
+    """Generate about page"""
+    about_path = Path(base_dir) / "about.qmd"
+    if not about_path.exists():
+        # Create a simple about page if file doesn't exist
+        page_content = """
+        <article>
+            <h1>About Me</h1>
+            <div class="about-profile">
+                <img src="profile.jpg" alt="Profile">
+            </div>
+            <p>Welcome to my blog.</p>
+        </article>
+        """
+        html = generate_html_layout("About - Thomas W. Bush", page_content, "page")
+        with open(Path(output_dir) / "about.html", "w", encoding="utf-8") as f:
+            f.write(html)
+        return
+
+    with open(about_path, "r", encoding="utf-8") as f:
+        content = f.read()
+
+    frontmatter, body = parse_frontmatter(content)
+    html_content = md_to_html(body)
+
+    # Extract social links from frontmatter
+    social_links_html = ""
+    # Try nested structure first (about.links)
+    if (
+        "about" in frontmatter
+        and isinstance(frontmatter["about"], dict)
+        and "links" in frontmatter["about"]
+    ):
+        links = frontmatter["about"]["links"]
+    # Fallback to top-level links (parser puts them here)
+    elif "links" in frontmatter and isinstance(frontmatter["links"], list):
+        links = frontmatter["links"]
+    else:
+        links = []
+
+    link_html = []
+    icon_map = {
+        "twitter": "🐦",
+        "linkedin": "💼",
+        "github": "🐙",
+        "file": "📄",
+        "envelope": "✉️",
+    }
+    for link in links:
+        if isinstance(link, dict):
+            icon = link.get("icon", "")
+            text = link.get("text", "")
+            href = link.get("href", "#")
+            icon_char = icon_map.get(icon, "🔗")
+            link_html.append(f'<a href="{href}" target="_blank">{icon_char} {text}</a>')
+
+    if link_html:
+        social_links_html = (
+            '<div class="social-links">' + " ".join(link_html) + "</div>"
+        )
+
+    page_content = f"""
+    <article>
+        <h1>{frontmatter.get("title", "About")}</h1>
+        <div class="about-profile">
+            <img src="profile.jpg" alt="Profile">
+        </div>
+        {html_content}
+        {social_links_html}
+    </article>
+    """
+
+    html = generate_html_layout("About - Thomas W. Bush", page_content, "page")
+
+    with open(Path(output_dir) / "about.html", "w", encoding="utf-8") as f:
+        f.write(html)
+
+
+def build_site(base_dir, output_dir):
+    """Build the entire site"""
+    base = Path(base_dir)
+    output = Path(output_dir)
+
+    # Clean and create output directory
+    if output.exists():
+        shutil.rmtree(output)
+    output.mkdir()
+
+    # Copy assets
+    copy_assets(base_dir, output_dir)
+
+    # Get all posts
+    posts = get_all_posts(base_dir)
+
+    # Group posts by section
+    research_posts = [p for p in posts if p["section"] == "research"]
+    books_posts = [p for p in posts if p["section"] == "books"]
+
+    # Generate individual post pages
+    for post in posts:
+        generate_post_page(post, output_dir)
+
+    # Generate listing pages
+    generate_listing("Recent Posts", posts, output / "index.html", "home")
+    generate_listing("Research", research_posts, output / "research.html", "listing")
+    generate_listing("Books", books_posts, output / "books.html", "listing")
+
+    # Generate about page
+    generate_about_page(base_dir, output_dir)
+
+    # Generate search.js with category filtering
+    search_js = """// Search and category filtering
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('search-input');
+    const categorySelect = document.getElementById('category-select');
+    const posts = document.querySelectorAll('.post-item');
+    
+    function filterPosts() {
+        const query = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const selectedCategory = categorySelect ? categorySelect.value.toLowerCase() : '';
+        
+        posts.forEach(post => {
+            let show = true;
+            
+            // Search filter
+            if (query) {
+                const title = post.getAttribute('data-title') || '';
+                const description = post.getAttribute('data-description') || '';
+                const categories = post.getAttribute('data-categories') || '';
+                const match = title.includes(query) || 
+                             description.includes(query) || 
+                             categories.includes(query);
+                if (!match) show = false;
+            }
+            
+            // Category filter
+            if (selectedCategory && show) {
+                const categories = post.getAttribute('data-categories') || '';
+                if (!categories.includes(selectedCategory)) {
+                    show = false;
+                }
+            }
+            
+            if (show) {
+                post.classList.remove('hidden');
+            } else {
+                post.classList.add('hidden');
+            }
+        });
+    }
+    
+    if (searchInput) {
+        searchInput.addEventListener('input', filterPosts);
+    }
+    
+    if (categorySelect) {
+        categorySelect.addEventListener('change', filterPosts);
+    }
+});"""
+
+    with open(output / "search.js", "w", encoding="utf-8") as f:
+        f.write(search_js)
+
+    print(f"Site built successfully! {len(posts)} posts generated.")
+    print(f"Output directory: {output_dir}")
+
+
+if __name__ == "__main__":
+    base_dir = os.path.dirname(os.path.abspath(__file__))
+    output_dir = os.path.join(base_dir, "_site")
+
+    build_site(base_dir, output_dir)
