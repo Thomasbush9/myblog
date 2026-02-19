@@ -1,15 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
-    <loc>https://thomasbush9.github.io/myblog/posts/attention-einsum/index.html</loc>
-    <lastmod>2025-07-28T03:22:09.246Z</lastmod>
+    <loc>https://thomasbush9.github.io/myblog/about.html</loc>
+    <lastmod>2026-02-19T06:46:44.262Z</lastmod>
   </url>
   <url>
-    <loc>https://thomasbush9.github.io/myblog/about.html</loc>
-    <lastmod>2025-07-28T03:22:09.239Z</lastmod>
+    <loc>https://thomasbush9.github.io/myblog/research/dissection-array/index.html</loc>
+    <lastmod>2026-02-19T06:46:44.276Z</lastmod>
+  </url>
+  <url>
+    <loc>https://thomasbush9.github.io/myblog/books/index.html</loc>
+    <lastmod>2026-02-19T06:46:44.262Z</lastmod>
+  </url>
+  <url>
+    <loc>https://thomasbush9.github.io/myblog/posts/dissection-array/index.html</loc>
+    <lastmod>2026-02-19T06:46:44.269Z</lastmod>
   </url>
   <url>
     <loc>https://thomasbush9.github.io/myblog/index.html</loc>
-    <lastmod>2025-07-28T03:22:09.239Z</lastmod>
+    <lastmod>2026-02-19T06:46:44.262Z</lastmod>
+  </url>
+  <url>
+    <loc>https://thomasbush9.github.io/myblog/posts/attention-einsum/index.html</loc>
+    <lastmod>2026-02-19T06:46:44.269Z</lastmod>
+  </url>
+  <url>
+    <loc>https://thomasbush9.github.io/myblog/research/index.html</loc>
+    <lastmod>2026-02-19T06:46:44.276Z</lastmod>
+  </url>
+  <url>
+    <loc>https://thomasbush9.github.io/myblog/research/attention-einsum/index.html</loc>
+    <lastmod>2026-02-19T06:46:44.276Z</lastmod>
   </url>
 </urlset>

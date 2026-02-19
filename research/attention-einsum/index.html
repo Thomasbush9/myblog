@@ -194,7 +194,10 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Why Attention Is All You Need?</h1>
-                      </div>
+                                <div class="quarto-categories">
+                <div class="quarto-category">research</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -305,7 +308,7 @@ window.Quarto = {
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
 <p>To develop an attention module, we only need to import a couple of python’s libraries, mostly to facilitate the backward pass during training, although if you are not familiar with backpropagation and how torch modules work under the hood, I strongly encourage you to try to implement some basics one yourself, see the <a href="#Additional-Material">Additional material</a> for resources on this.</p>
-<div id="380f651e" class="cell" data-execution_count="1">
+<div id="00dd98c8" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> affine_grid_generator, nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -340,7 +343,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>Now that we went through each step in detail we can put all of them together to built the initial diagram into a single python class called SelfAttentionModule. Below there is the full code to generate it.</p>
-<div id="6a68e7b0" class="cell" data-execution_count="2">
+<div id="fc716cb4" class="cell" data-execution_count="2">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we generate a random input</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">10</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#we then create a class:</span></span>
@@ -380,7 +383,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>The mask is constructed by zerooing out the upper triangle of the attention matrix. These positions are then replaced with negatively infinity so that when passing through the softmax their contributions become zero. In PyTorch we can do it like this:</p>
-<div id="a2992296" class="cell" data-execution_count="3">
+<div id="902ed3c8" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#generate a random tensor</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>affinities <span class="op">=</span> torch.randn((<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#create the mask</span></span>
