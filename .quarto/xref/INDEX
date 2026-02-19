@@ -19,5 +19,17 @@
   },
   "posts/dissection-array/index.qmd": {
     "index.html": "70ef8f8d"
+  },
+  "research/attention-einsum/index.qmd": {
+    "index.html": "e5f3f8e5"
+  },
+  "research/index.qmd": {
+    "index.html": "ad6754af"
+  },
+  "research/dissection-array/index.qmd": {
+    "index.html": "1462a023"
+  },
+  "books/index.qmd": {
+    "index.html": "fd7081a1"
   }
 }

@@ -8,6 +8,10 @@ website:
     left:
       - href: index.qmd
         text: Home
+      - href: research/index.qmd
+        text: Research
+      - href: books/index.qmd
+        text: Books
       - href: about.qmd
         text: About
     right:
@@ -15,13 +19,20 @@ website:
         href: https://github.com/Thomasbush9
       - icon: file-person
         href: /cv/ThomasBush_CV.pdf
+  search:
+    location: navbar
+    type: overlay
 format:
   html:
     toc: true
-    theme:
+    theme: 
       - cosmo
       - brand
     css: styles.css
+    mainfont: "JetBrains Mono"
+    monofont: "JetBrains Mono"
+execute:
+  freeze: auto
 publish:
   method: gh-pages
 resources:

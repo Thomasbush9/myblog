@@ -1,7 +1,15 @@
 {
   "listingMap": {
+    "research/index.qmd": [
+      "research/"
+    ],
+    "books/index.qmd": [
+      "books/"
+    ],
     "index.qmd": [
-      "posts"
+      "research/",
+      "books/",
+      "_posts/"
     ]
   }
 }

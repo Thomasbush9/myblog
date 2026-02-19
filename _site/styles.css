@@ -1,1 +1,265 @@
-/* css styles */
+/* Catppuccin Mocha Theme for Quarto */
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap');
+
+/* Catppuccin Mocha Palette */
+:root {
+  --ctp-rosewater: #f5e0dc;
+  --ctp-flamingo: #f2cdcd;
+  --ctp-pink: #f5c2e7;
+  --ctp-mauve: #cba6f7;
+  --ctp-red: #f38ba8;
+  --ctp-maroon: #eba0ac;
+  --ctp-peach: #fab387;
+  --ctp-yellow: #f9e2af;
+  --ctp-green: #a6e3a1;
+  --ctp-teal: #94e2d5;
+  --ctp-sky: #89dceb;
+  --ctp-sapphire: #74c7ec;
+  --ctp-blue: #89b4fa;
+  --ctp-lavender: #b4befe;
+  --ctp-text: #cdd6f4;
+  --ctp-subtext1: #bac2de;
+  --ctp-subtext0: #a6adc8;
+  --ctp-overlay2: #9399b2;
+  --ctp-overlay1: #7f849c;
+  --ctp-overlay0: #6c7086;
+  --ctp-surface2: #585b70;
+  --ctp-surface1: #45475a;
+  --ctp-surface0: #313244;
+  --ctp-base: #1e1e2e;
+  --ctp-mantle: #181825;
+  --ctp-crust: #11111b;
+}
+
+/* Base styles */
+body {
+  background-color: var(--ctp-base);
+  color: var(--ctp-text);
+  font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace;
+  line-height: 1.6;
+}
+
+/* Headers */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--ctp-lavender);
+  font-weight: 700;
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+}
+
+h1 { border-bottom: 2px solid var(--ctp-mauve); padding-bottom: 0.3em; }
+h2 { border-bottom: 1px solid var(--ctp-surface2); padding-bottom: 0.2em; }
+h3 { color: var(--ctp-blue); }
+h4 { color: var(--ctp-teal); }
+h5 { color: var(--ctp-sky); }
+h6 { color: var(--ctp-sapphire); }
+
+/* Links */
+a {
+  color: var(--ctp-sky);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: var(--ctp-sapphire);
+  text-decoration: underline;
+}
+
+/* Navigation bar */
+.navbar {
+  background-color: var(--ctp-mantle) !important;
+  border-bottom: 1px solid var(--ctp-surface0);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.navbar-brand, .navbar-nav .nav-link {
+  color: var(--ctp-text) !important;
+  font-weight: 500;
+}
+
+.navbar-nav .nav-link:hover {
+  color: var(--ctp-sky) !important;
+}
+
+.navbar-nav .nav-link.active {
+  color: var(--ctp-sky) !important;
+  border-bottom: 2px solid var(--ctp-sky);
+}
+
+/* Cards and listings */
+.listing-item, .card {
+  background-color: var(--ctp-surface0) !important;
+  border: 1px solid var(--ctp-surface1) !important;
+  border-radius: 4px !important;
+  margin-bottom: 1rem;
+}
+
+.listing-item:hover, .card:hover {
+  border-color: var(--ctp-surface2) !important;
+  box-shadow: 0 0 10px rgba(137, 180, 250, 0.1);
+}
+
+.listing-item .metadata, .card .metadata {
+  color: var(--ctp-overlay0);
+  font-size: 0.9em;
+}
+
+/* Buttons */
+.btn {
+  font-family: 'JetBrains Mono', monospace;
+  border-radius: 3px !important;
+  border: 1px solid var(--ctp-surface2) !important;
+}
+
+.btn-primary {
+  background-color: var(--ctp-blue) !important;
+  color: var(--ctp-crust) !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--ctp-sapphire) !important;
+}
+
+/* Code blocks */
+pre, code {
+  font-family: 'JetBrains Mono', 'Monaco', 'Consolas', monospace !important;
+}
+
+code {
+  background-color: var(--ctp-surface1) !important;
+  color: var(--ctp-text) !important;
+  padding: 0.2em 0.4em !important;
+  border-radius: 3px !important;
+}
+
+pre {
+  background-color: var(--ctp-mantle) !important;
+  border: 1px solid var(--ctp-surface1) !important;
+  border-radius: 4px !important;
+}
+
+/* Tables */
+table {
+  background-color: var(--ctp-surface0) !important;
+  border: 1px solid var(--ctp-surface1) !important;
+}
+
+th {
+  background-color: var(--ctp-surface1) !important;
+  color: var(--ctp-text) !important;
+}
+
+td {
+  border-top: 1px solid var(--ctp-surface1) !important;
+}
+
+/* Quoted text */
+blockquote {
+  border-left: 4px solid var(--ctp-teal) !important;
+  background-color: var(--ctp-mantle) !important;
+  padding: 1em 1.5em !important;
+  margin: 1.5em 0;
+  color: var(--ctp-subtext0);
+}
+
+blockquote p {
+  color: var(--ctp-subtext0) !important;
+}
+
+/* Search box */
+.form-control {
+  background-color: var(--ctp-base) !important;
+  color: var(--ctp-text) !important;
+  border: 1px solid var(--ctp-surface2) !important;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.form-control:focus {
+  border-color: var(--ctp-sky) !important;
+  box-shadow: 0 0 0 0.2rem rgba(116, 199, 236, 0.25) !important;
+}
+
+/* Footer */
+footer {
+  background-color: var(--ctp-mantle);
+  border-top: 1px solid var(--ctp-surface0);
+  color: var(--ctp-overlay1);
+  margin-top: 3em;
+  padding: 2em 0;
+}
+
+/* Category badges */
+.category-badge {
+  background-color: var(--ctp-surface1);
+  border-radius: 3px;
+  color: var(--ctp-text);
+  display: inline-block;
+  font-size: 0.8em;
+  padding: 0.2em 0.6em;
+  margin-right: 0.5em;
+}
+
+.category-research { background-color: var(--ctp-blue); color: var(--ctp-base); }
+.category-books { background-color: var(--ctp-green); color: var(--ctp-base); }
+.category-blog { background-color: var(--ctp-peach); color: var(--ctp-base); }
+
+/* Alert boxes */
+.alert {
+  border: 1px solid;
+  border-radius: 4px;
+  margin: 1rem 0;
+  padding: 1rem;
+}
+
+.alert-note {
+  background-color: rgba(137, 189, 235, 0.1);
+  border-color: var(--ctp-sky);
+  color: var(--ctp-sky);
+}
+
+.alert-warning {
+  background-color: rgba(249, 226, 175, 0.1);
+  border-color: var(--ctp-yellow);
+  color: var(--ctp-yellow);
+}
+
+.alert-danger {
+  background-color: rgba(243, 139, 168, 0.1);
+  border-color: var(--ctp-red);
+  color: var(--ctp-red);
+}
+
+.alert-success {
+  background-color: rgba(166, 227, 161, 0.1);
+  border-color: var(--ctp-green);
+  color: var(--ctp-green);
+}
+
+/* About me card */
+#quarto-about "jolla" {
+  background-color: var(--ctp-surface0);
+  border: 1px solid var(--ctp-surface1);
+  border-radius: 4px;
+}
+
+/* Listing description */
+.listing-description {
+  color: var(--ctp-subtext0);
+}
+
+/* Make it feel more TUI-like with subtle glow */
+.listing-item:hover, .card:hover {
+  box-shadow: 0 0 8px rgba(137, 180, 250, 0.2);
+}
+
+/* Responsive tweaks */
+@media (max-width: 768px) {
+  body {
+    font-size: 0.95em;
+  }
+  
+  .navbar {
+    padding: 0.5rem 1rem;
+  }
+}
