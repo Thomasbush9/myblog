@@ -19,6 +19,7 @@ website:
         href: https://github.com/Thomasbush9
       - icon: file-person
         href: cv/ThomasBush_CV.pdf
+        target: _blank
   search:
     location: navbar
     type: overlay
@@ -28,9 +29,11 @@ format:
     theme: 
       - cosmo
       - brand
-    css: styles.css?v=1
+    css: styles.css
     mainfont: "JetBrains Mono"
     monofont: "JetBrains Mono"
+    include-after-body:
+      - theme-toggle.js
 execute:
   freeze: auto
 publish:

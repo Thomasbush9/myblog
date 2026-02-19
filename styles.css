@@ -563,3 +563,202 @@ footer::before {
   display: block !important;
   margin-bottom: 5px !important;
 }
+
+/* ====================================
+   THEME TOGGLE BUTTON STYLES
+   ==================================== */
+
+.theme-toggle-btn {
+  background-color: var(--ctp-surface1) !important;
+  border: 1px solid var(--ctp-blue) !important;
+  border-radius: 4px !important;
+  color: var(--ctp-text) !important;
+  cursor: pointer !important;
+  font-size: 1.2em !important;
+  padding: 0.3em 0.6em !important;
+  margin: 0 0.5em !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 0 5px rgba(137, 180, 250, 0.3) !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--ctp-surface2) !important;
+  box-shadow: 0 0 10px rgba(137, 180, 250, 0.5) !important;
+  transform: translateY(-1px) !important;
+}
+
+.theme-toggle-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 0 3px rgba(137, 180, 250, 0.3) !important;
+}
+
+/* Adjust navbar spacing */
+.navbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5em !important;
+}
+
+/* Light theme adjustments */
+:root[data-theme="light"] {
+  /* Keep the TUI effects but with light colors */
+  --tui-glow-intensity: 0.2;
+}
+
+:root[data-theme="light"] body::after {
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.02) 1px,
+      rgba(0, 0, 0, 0.02) 2px
+    ) !important;
+}
+
+:root[data-theme="light"] .sourceCode::before {
+  background: 
+    linear-gradient(90deg, transparent 50%, rgba(0, 0, 0, 0.01) 50%) !important;
+}
+
+/* ====================================
+   THEME TOGGLE BUTTON STYLES
+   ==================================== */
+
+.theme-toggle-btn {
+  background-color: var(--ctp-surface1) !important;
+  border: 1px solid var(--ctp-blue) !important;
+  border-radius: 4px !important;
+  color: var(--ctp-text) !important;
+  cursor: pointer !important;
+  font-size: 1.2em !important;
+  padding: 0.3em 0.6em !important;
+  margin: 0 0.5em !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 0 5px rgba(137, 180, 250, 0.3) !important;
+  position: relative !important;
+  z-index: 1000 !important;
+}
+
+.theme-toggle-btn:hover {
+  background-color: var(--ctp-surface2) !important;
+  box-shadow: 0 0 10px rgba(137, 180, 250, 0.5) !important;
+  transform: translateY(-1px) !important;
+}
+
+.theme-toggle-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 0 3px rgba(137, 180, 250, 0.3) !important;
+}
+
+/* Adjust navbar spacing */
+.navbar-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5em !important;
+}
+
+/* Light theme adjustments */
+:root[data-theme="light"] {
+  /* Keep the TUI effects but with light colors */
+  --tui-glow-intensity: 0.2;
+}
+
+:root[data-theme="light"] body::after {
+  background: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 1px,
+      rgba(0, 0, 0, 0.02) 1px,
+      rgba(0, 0, 0, 0.02) 2px
+    ) !important;
+}
+
+:root[data-theme="light"] .sourceCode::before {
+  background: 
+    linear-gradient(90deg, transparent 50%, rgba(0, 0, 0, 0.01) 50%) !important;
+}
+
+/* ====================================
+   CATEGORY COLOR SCHEME
+   ==================================== */
+
+/* Main categories - bright backgrounds */
+.listing-category[data-category="cmVzZWFyY2g="],  /* research */
+.category-research {
+  background-color: var(--ctp-blue) !important;
+  color: var(--ctp-base) !important;
+  font-weight: 700 !important;
+}
+
+.listing-category[data-category="Ym9va3M="],  /* books */
+.category-books {
+  background-color: var(--ctp-green) !important;
+  color: var(--ctp-base) !important;
+  font-weight: 700 !important;
+}
+
+.listing-category[data-category="cG9zdHM="],  /* posts */
+.category-posts {
+  background-color: var(--ctp-peach) !important;
+  color: var(--ctp-base) !important;
+  font-weight: 700 !important;
+}
+
+/* Sub-categories - softer backgrounds with colored text */
+.listing-category[data-category="YXR0ZW50aW9u="],  /* attention */
+.category-attention {
+  background-color: rgba(137, 180, 250, 0.2) !important;
+  color: var(--ctp-blue) !important;
+  border: 1px solid var(--ctp-blue) !important;
+}
+
+.listing-category[data-category="ZGVlcC1sZWFybmluZw=="],  /* deep-learning */
+.category-deep-learning {
+  background-color: rgba(203, 166, 247, 0.2) !important;
+  color: var(--ctp-mauve) !important;
+  border: 1px solid var(--ctp-mauve) !important;
+}
+
+.listing-category[data-category="bWwtYmFzaWNz"],  /* ml-basics */
+.category-ml-basics {
+  background-color: rgba(166, 227, 161, 0.2) !important;
+  color: var(--ctp-green) !important;
+  border: 1px solid var(--ctp-green) !important;
+}
+
+.listing-category[data-category="dGVuc29ycw=="],  /* tensors */
+.category-tensors {
+  background-color: rgba(148, 226, 213, 0.2) !important;
+  color: var(--ctp-teal) !important;
+  border: 1px solid var(--ctp-teal) !important;
+}
+
+/* General category styling */
+.listing-category {
+  display: inline-block !important;
+  padding: 0.2em 0.6em !important;
+  margin: 0.1em 0.2em !important;
+  border-radius: 3px !important;
+  font-size: 0.85em !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+.listing-category:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Ensure multiple categories are spaced nicely */
+.listing-categories {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.3em !important;
+  margin: 0.5em 0 !important;
+}

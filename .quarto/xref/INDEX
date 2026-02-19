@@ -1,35 +1,20 @@
 {
-  "posts/post-with-code/index.qmd": {
-    "index.html": "2568db4d"
-  },
-  "posts/welcome/index.qmd": {
-    "index.html": "fe589895"
-  },
-  "posts/attention-einsum.qmd": {
-    "attention-einsum.html": "994600c2"
-  },
-  "index.qmd": {
-    "index.html": "fbf65d73"
-  },
-  "about.qmd": {
-    "about.html": "886c6e3f"
-  },
-  "posts/attention-einsum/index.qmd": {
-    "index.html": "a6ff814c"
-  },
-  "posts/dissection-array/index.qmd": {
-    "index.html": "70ef8f8d"
-  },
   "research/attention-einsum/index.qmd": {
-    "index.html": "e5f3f8e5"
+    "index.html": "de720aaa"
   },
   "research/index.qmd": {
-    "index.html": "ad6754af"
+    "index.html": "8566f4ac"
   },
   "research/dissection-array/index.qmd": {
-    "index.html": "1462a023"
+    "index.html": "49403e89"
   },
   "books/index.qmd": {
-    "index.html": "fd7081a1"
+    "index.html": "74539119"
+  },
+  "index.qmd": {
+    "index.html": "d65d8d83"
+  },
+  "about.qmd": {
+    "about.html": "c32046ca"
   }
 }
