@@ -1,7 +1,7 @@
 ---
 title: "How to Read a Book by Mortimer j. Adler and Charles Van Doren"
-date: 2026-02-19                    
-categories: [books, philosophy]  # See available categories below
+date: 2026-02-19
+categories: [books, philosophy] 
 description: "We start reading early on our lives that we often take that skill for granted without really questioning how to improve it. In this book we are going to re-learn how to read."  # Shows in listings
 image: images/how_to_read_book.jpg         # Optional: cover for listings
 toc: true                             # Optional: table of contents
