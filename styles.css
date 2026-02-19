@@ -762,9 +762,7 @@ p, article p, .post-content p {
 }
 
 /* FIX: Remove window controls that might cause overlay issues */
-pre::after {
-  display: none !important;
-}
+
 
 /* FIX: Ensure consistent background */
 html, body {
