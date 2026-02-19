@@ -703,3 +703,43 @@ p > pre {
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
 }
+
+
+/* FIX: Remove terminal shadow that causes visual artifacts */
+.quarto-container {
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* FIX: Ensure proper text spacing */
+p, article p, .post-content p {
+  word-spacing: normal !important;
+  letter-spacing: normal !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word;
+}
+
+/* FIX: Remove window controls that might cause overlay issues */
+pre::after {
+  display: none !important;
+}
+
+/* FIX: Ensure consistent background */
+html, body {
+  background-color: var(--ctp-base) !important;
+}
+
+/* FIX: Better code block styling */
+pre {
+  margin: 1.5rem 0 !important;
+  padding: 1.5rem !important;
+  border-radius: 8px !important;
+  overflow-x: auto !important;
+  position: relative !important;
+}
+
+pre code {
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+}
