@@ -305,7 +305,7 @@ def generate_post_page(post, output_dir):
     
     # Generate TOC if enabled - DISABLED to fix overlay
     toc_html = ""
-    if False and post["frontmatter"].get("toc", False):
+    if post["frontmatter"].get("toc", False):
         headers = re.findall(r"<h([1-4])>([^<]+)</h\1>", html_content)
         headers = [(level, text.strip()) for level, text in headers]
         post_title = post["title"]
