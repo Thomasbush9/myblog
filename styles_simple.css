@@ -845,3 +845,49 @@ html, body {
   background-color: var(--ctp-base) !important;
   color: var(--ctp-text) !important;
 }
+
+
+/* EMERGENCY FIX: Force spaces around parentheses to render */
+@media screen {
+  p::before {
+    content: " ";
+    white-space: pre;
+    display: inline;
+  }
+  
+  /* Add zero-width space before parentheses to force spacing */
+  p::after {
+    content: "B";
+    display: none;
+  }
+  
+  /* Force normal spacing on all text elements */
+  p, article p, div, span {
+    text-spacing-trim: none !important;
+    text-autospace: no-autospace !important;
+  }
+}
+
+/* Fix for JetBrains Mono font spacing issues */
+.post-item p, article p {
+  word-spacing: 0.1em !important;  /* Slightly increase word spacing */
+  letter-spacing: 0.01em !important; /* Very slight letter spacing */
+}
+
+
+/* EMERGENCY FIX: MathJax overlay - force white background behind equations */
+mjx-container {
+  background-color: var(--ctp-base) !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+mjx-container svg {
+  background-color: var(--ctp-base) !important;
+}
+
+/* Hide any MathJax overflow */
+.MathJax, .MathJax_Display {
+  overflow: hidden !important;
+  max-width: 100% !important;
+}
