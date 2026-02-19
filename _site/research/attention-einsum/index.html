@@ -307,11 +307,9 @@ window.Quarto = {
 <section id="implementation" class="level2">
 <h2 class="anchored" data-anchor-id="implementation">Implementation</h2>
 <p>To develop an attention module, we only need to import a couple of python’s libraries, mostly to facilitate the backward pass during training, although if you are not familiar with backpropagation and how torch modules work under the hood, I strongly encourage you to try to implement some basics one yourself, see the <a href="#Additional-Material">Additional material</a> for resources on this.</p>
-<div id="7010b850" class="cell" data-execution_count="1">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch <span class="im">import</span> affine_grid_generator, nn</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <p>As we have seen, attention starts with the mapping of the input sequence (batch, n_tokens, dim_input) into three embeddings (Q, K, V) of shape: batch, n_tokens, dim_attention. This step is crucial as it’s the only one where there are trainable parameters other than in the output layer.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
@@ -342,8 +340,7 @@ window.Quarto = {
 </figure>
 </div>
 <p>Now that we went through each step in detail we can put all of them together to built the initial diagram into a single python class called SelfAttentionModule. Below there is the full code to generate it.</p>
-<div id="2b4a383c" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we generate a random input</span></span>
+<div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># we generate a random input</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> torch.randn((<span class="dv">12</span>, <span class="dv">5</span>, <span class="dv">10</span>))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#we then create a class:</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SelfAttentionModule(nn.Module):</span>
@@ -371,7 +368,6 @@ window.Quarto = {
 <span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>        attn_values <span class="op">=</span> torch.einsum(<span class="st">'...kz, ...zc-&gt;...kc'</span>, attn_weights, V)</span>
 <span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>        attn_values <span class="op">=</span> <span class="va">self</span>.linear_o(attn_values)</span>
 <span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> attn_values, attn_weights</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 <section id="masked-attention" class="level3">
 <h3 class="anchored" data-anchor-id="masked-attention">Masked Attention</h3>
 <p>Importantly, since attention is often used in next token prediction tasks, if we were using the full attention weights across the entire sequence, we’d allow each token to attend all future tokens, which would be like cheating. To prevent this, we apply a casual mask to the attention scores before computing the softmax. The mask will ensure that each token can only attend to the previous ones.</p>
@@ -382,14 +378,12 @@ window.Quarto = {
 </figure>
 </div>
 <p>The mask is constructed by zerooing out the upper triangle of the attention matrix. These positions are then replaced with negatively infinity so that when passing through the softmax their contributions become zero. In PyTorch we can do it like this:</p>
-<div id="7e4acc59" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#generate a random tensor</span></span>
+<div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#generate a random tensor</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>affinities <span class="op">=</span> torch.randn((<span class="dv">4</span>, <span class="dv">4</span>))</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#create the mask</span></span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> torch.tril(torch.ones_like(affinities)).<span class="bu">bool</span>()</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co">#apply the mask</span></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>affinities <span class="op">=</span> affinities.masked_fill(mask<span class="op">==</span><span class="dv">0</span>, <span class="bu">float</span>(<span class="st">'-inf'</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
 </section>
 <section id="positional-encoding-in-attention" class="level3">
 <h3 class="anchored" data-anchor-id="positional-encoding-in-attention">Positional Encoding in Attention</h3>

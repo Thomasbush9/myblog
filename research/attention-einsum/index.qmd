@@ -5,7 +5,6 @@ image: images/overview_transformer.png
 toc: true
 toc-title: "Table of Contents"
 toc-location: left
-jupyter: myblog
 ---
 ## Introduction
 
@@ -71,7 +70,7 @@ The difference is only in the operation after the linear transformations which a
 
 To develop an attention module, we only need to import a couple of python's libraries, mostly to facilitate the backward pass during training, although if you are not familiar with backpropagation and how torch modules work under the hood, I strongly encourage you to try to implement some basics one yourself, see the [Additional material](#Additional-Material) for resources on this.
 
-```{python}
+```python
 import torch
 from torch import affine_grid_generator, nn
 import math
@@ -97,7 +96,7 @@ Finally we compute the attention values by scaling the value vector by the atten
 
 Now that we went through each step in detail we can put all of them together to built the initial diagram into a single python class called SelfAttentionModule. Below there is the full code to generate it.
 
-```{python}
+```python
 # we generate a random input
 x = torch.randn((12, 5, 10))
 #we then create a class:
@@ -135,7 +134,7 @@ Importantly, since attention is often used in next token prediction tasks, if we
 
 The mask is constructed by zerooing out the upper triangle of the attention matrix. These positions are then replaced with negatively infinity so that when passing through the softmax their contributions become zero. In PyTorch we can do it like this:
 
-```{python}
+```python
 #generate a random tensor
 affinities = torch.randn((4, 4))
 #create the mask

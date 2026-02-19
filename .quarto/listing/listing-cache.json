@@ -2,6 +2,12 @@
   "listingMap": {
     "research/index.qmd": [
       "research/"
+    ],
+    "books/index.qmd": [
+      "books/"
+    ],
+    "index.qmd": [
+      "research/"
     ]
   }
 }

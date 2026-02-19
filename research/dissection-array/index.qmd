@@ -4,7 +4,6 @@ date: 2025-08-04
 toc: true
 toc-title: "Table of Contents"
 toc-location: left
-jupyter: myblog
 ---
 
 ## Introduction: What Is It an Array?
@@ -13,7 +12,7 @@ Before going through what is an array and why they are so much used in Computer 
 
 When we declare a variable, that variable will be stored into the RAM (random access memory) of our computer. From this moment that variable, let's say $x$ will have an address that will point to that memory location, a variable that stores the address of another one is called *pointer*.
 
-```{python}
+```python
 x = 4
 print(hex(id(x)))
 ```
@@ -25,7 +24,7 @@ Here we have assigned the value $4$ to the variable x, what we will have is:
 The address is represented in hexadecimal format with 0-9 and A-F where each byte has an address. For example a two digit number as a limit of FF or 255 in decimal system which is the same as 8 bits in binary.
 
 We can see that if we copy a variable to another one, the new one is basically a pointer to the old address. However, if a different variable is initialized with the same value as $x$, they will have a different address
-```{python}
+```python
 y = x
 print(id(y)==id(x))
 print(hex(id(y)) == hex(id(x)))
@@ -38,7 +37,7 @@ print(hex(id(x)) == hex(id(z)))
 
 Arrays are objects composed of elements of the same type and stored in continuous memory cells (homoguous memory). Computationally speaking they are more efficient than lists as we can access their elements just by using the location as a single pointer, since the first element will define the memory location of the others, while lists have a different pointer for each element.
 
-```{python}
+```python
 import numpy as np
 import sys
 
@@ -71,14 +70,14 @@ Basically, each array $n$ of shape $(I, J)$ will be stored in memory as a contin
 
 Basically we can define a view of our array as a final shape and an number of elements in the line before moving to the next row, column, called strides and expressed in bits (8 bits for example).
 
-```{python}
+```python
 x = np.arange(6).reshape((2, 3))
 print(x)
 print(x.strides)
 ```
 Here we have defined a two dimensional array that has to move 24 bits before changing row and 8 bits before changing column. With this information we can change the view just by changing the shape and the stride view:
 
-```{python}
+```python
 new_shape = (3, 2)
 new_stride = (16, 8)
 new_x = np.lib.stride_tricks.as_strided(x, new_shape, new_stride)
@@ -88,7 +87,7 @@ We are saying to move just two numbers before going to the next row and we have 
 
 Another important technique that arrays allow us to implement is to generate a bigger array just by tiling a smaller one with the *tile* operation.
 
-```{python}
+```python
 x = np.eye(9)
 num_rep = (3, 3)
 x_tiled = np.tile(x, num_rep)
@@ -106,7 +105,7 @@ Specifically to ML, tensors are implemented in a way by which they support autog
 
 If you don't have time to do the course, very briefly, every time you perform an operation between two tensors, torch will compute a computational graph that can be use to calculate the gradient relative to that tensor.
 
-```{python}
+```python
 import torch
 
 a = torch.tensor(2.0, requires_grad=True)
