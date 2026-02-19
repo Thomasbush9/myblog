@@ -1,0 +1,3 @@
+[submodule "posts/dissection-array/pure-cnn"]
+	path = posts/dissection-array/pure-cnn
+	url = https://github.com/Thomasbush9/pure-cnn

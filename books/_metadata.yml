@@ -1,0 +1,9 @@
+# Options for all book posts
+# freeze computational output
+freeze: auto
+
+# Enable banner style title blocks
+title-block-banner: true
+
+# Default category for book posts
+categories: [books]

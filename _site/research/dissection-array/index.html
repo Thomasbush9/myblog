@@ -193,7 +193,10 @@ window.Quarto = {
   <div class="quarto-title-banner page-columns page-full">
     <div class="quarto-title column-body">
       <h1 class="title">Dissection of a Tensor</h1>
-                      </div>
+                                <div class="quarto-categories">
+                <div class="quarto-category">research</div>
+              </div>
+                  </div>
   </div>
     
   
@@ -243,7 +246,7 @@ window.Quarto = {
 <h2 class="anchored" data-anchor-id="introduction-what-is-it-an-array">Introduction: What Is It an Array?</h2>
 <p>Before going through what is an array and why they are so much used in Computer Science or Machine Learning, we will have to do a quick excursus into how variables are stored in memory.</p>
 <p>When we declare a variable, that variable will be stored into the RAM (random access memory) of our computer. From this moment that variable, let’s say <span class="math inline">\(x\)</span> will have an address that will point to that memory location, a variable that stores the address of another one is called <em>pointer</em>.</p>
-<div id="5f39e916" class="cell">
+<div id="9244b33f" class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(x)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -254,7 +257,7 @@ window.Quarto = {
 </ul>
 <p>The address is represented in hexadecimal format with 0-9 and A-F where each byte has an address. For example a two digit number as a limit of FF or 255 in decimal system which is the same as 8 bits in binary.</p>
 <p>We can see that if we copy a variable to another one, the new one is basically a pointer to the old address. However, if a different variable is initialized with the same value as <span class="math inline">\(x\)</span>, they will have a different address</p>
-<div id="71470285" class="cell">
+<div id="6d786512" class="cell">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> x</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">id</span>(y)<span class="op">==</span><span class="bu">id</span>(x))</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">hex</span>(<span class="bu">id</span>(y)) <span class="op">==</span> <span class="bu">hex</span>(<span class="bu">id</span>(x)))</span>
@@ -265,7 +268,7 @@ window.Quarto = {
 <section id="what-about-arrays" class="level3">
 <h3 class="anchored" data-anchor-id="what-about-arrays">What about Arrays</h3>
 <p>Arrays are objects composed of elements of the same type and stored in continuous memory cells (homoguous memory). Computationally speaking they are more efficient than lists as we can access their elements just by using the location as a single pointer, since the first element will define the memory location of the others, while lists have a different pointer for each element.</p>
-<div id="c5ce8942" class="cell">
+<div id="13e32d96" class="cell">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> sys</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -294,13 +297,13 @@ window.Quarto = {
 <p>Now we have seen how arrays are stored and why it is more efficient than other data structure, it is important to discuss about a cool application of their continguous memory: the a strided representation.</p>
 <p>Basically, each array <span class="math inline">\(n\)</span> of shape <span class="math inline">\((I, J)\)</span> will be stored in memory as a continuous sequence of number, its elements, and the shape will just clarify how to view the array.</p>
 <p>Basically we can define a view of our array as a final shape and an number of elements in the line before moving to the next row, column, called strides and expressed in bits (8 bits for example).</p>
-<div id="3c81ef64" class="cell">
+<div id="bdf23616" class="cell">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.arange(<span class="dv">6</span>).reshape((<span class="dv">2</span>, <span class="dv">3</span>))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x)</span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(x.strides)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Here we have defined a two dimensional array that has to move 24 bits before changing row and 8 bits before changing column. With this information we can change the view just by changing the shape and the stride view:</p>
-<div id="09e795e8" class="cell">
+<div id="bae27b71" class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>new_shape <span class="op">=</span> (<span class="dv">3</span>, <span class="dv">2</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>new_stride <span class="op">=</span> (<span class="dv">16</span>, <span class="dv">8</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>new_x <span class="op">=</span> np.lib.stride_tricks.as_strided(x, new_shape, new_stride)</span>
@@ -308,7 +311,7 @@ window.Quarto = {
 </div>
 <p>We are saying to move just two numbers before going to the next row and we have defined the final shape to have one more row and one less column.</p>
 <p>Another important technique that arrays allow us to implement is to generate a bigger array just by tiling a smaller one with the <em>tile</em> operation.</p>
-<div id="d5cc7f66" class="cell">
+<div id="68600024" class="cell">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.eye(<span class="dv">9</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>num_rep <span class="op">=</span> (<span class="dv">3</span>, <span class="dv">3</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>x_tiled <span class="op">=</span> np.tile(x, num_rep)</span>
@@ -323,7 +326,7 @@ window.Quarto = {
 <p>Tensors are the main datatype used by the most used ML library: PyTorch. Mathematically, tensors are any scalar, vector or matrices and we can say that they are the same as arrays (the computer science name for them). The main difference between NumPy’s arrays and Torch’s tensors is the implementation.</p>
 <p>Specifically to ML, tensors are implemented in a way by which they support autograd and in this way backpropagation, the key concept for training a ML system, to read more about the implementation of backprop and autograd I suggest you the first lecture of the YouTube course from Karpathy here (add link).</p>
 <p>If you don’t have time to do the course, very briefly, every time you perform an operation between two tensors, torch will compute a computational graph that can be use to calculate the gradient relative to that tensor.</p>
-<div id="fb96c006" class="cell">
+<div id="b06496dd" class="cell">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>a <span class="op">=</span> torch.tensor(<span class="fl">2.0</span>, requires_grad<span class="op">=</span><span class="va">True</span>)</span>
