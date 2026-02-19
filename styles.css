@@ -442,19 +442,7 @@ h1, h2, h3, h4, h5, h6 {
     var(--ctp-surface1) 100%) !important;
 }
 
-.sourceCode::before {
-  content: "" !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  background: 
-    linear-gradient(90deg, transparent 50%, rgba(137, 180, 250, 0.03) 50%) !important;
-  background-size: 4px 4px !important;
-  pointer-events: none !important;
-  z-index: 0 !important;
-}
+
 
 .sourceCode code {
   position: relative !important;
@@ -618,10 +606,7 @@ footer::before {
     ) !important;
 }
 
-:root[data-theme="light"] .sourceCode::before {
-  background: 
-    linear-gradient(90deg, transparent 50%, rgba(0, 0, 0, 0.01) 50%) !important;
-}
+:root[data-theme="light"] 
 
 /* ====================================
    THEME TOGGLE BUTTON STYLES
@@ -677,10 +662,7 @@ footer::before {
     ) !important;
 }
 
-:root[data-theme="light"] .sourceCode::before {
-  background: 
-    linear-gradient(90deg, transparent 50%, rgba(0, 0, 0, 0.01) 50%) !important;
-}
+:root[data-theme="light"] 
 
 /* ====================================
    CATEGORY COLOR SCHEME
