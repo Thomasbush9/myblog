@@ -93,7 +93,7 @@
     
     // Wait for navbar to load then add toggle button
     const checkExist = setInterval(() => {
-      const navbar = document.querySelector('.navbar-right');
+      const navbar = document.querySelector('.navbar-nav.ms-auto');
       if (navbar) {
         clearInterval(checkExist);
         addToggleButton();
@@ -102,7 +102,7 @@
   }
 
   function addToggleButton() {
-    const navbarRight = document.querySelector('.navbar-right');
+    const navbarRight = document.querySelector('.navbar-nav.ms-auto');
     if (navbarRight) {
       // Check if button already exists
       if (!document.getElementById('theme-toggle')) {

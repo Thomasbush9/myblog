@@ -2,8 +2,8 @@
 title: "Thomas W. Bush"
 listing:
   contents: 
-    - research/
-    - books/
+    - research/*/
+    - books/*/
     - posts/
   sort: "date desc"
   type: default

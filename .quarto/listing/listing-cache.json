@@ -7,8 +7,8 @@
       "books/"
     ],
     "index.qmd": [
-      "research/",
-      "books/",
+      "research/*/",
+      "books/*/",
       "posts/"
     ]
   }
