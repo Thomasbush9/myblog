@@ -118,16 +118,16 @@ def md_to_html(md_content):
     html = re.sub(r"^::\+\s*\{[^}]*\}\s*\n?", "", html, flags=re.MULTILINE)
     html = re.sub(r"^:+\s*\n", "", html, flags=re.MULTILINE)
 
-    # Protect code blocks with placeholders before processing headers
+    # Protect code blocks with placeholders FIRST
     code_blocks = []
 
     def save_code_block(m):
         code_blocks.append(m.group(0))
-        return f"__CODE_BLOCK_{len(code_blocks) - 1}__"
+        return f"\n__CODE_BLOCK_{len(code_blocks) - 1}__\n"
 
-    html = re.sub(r"```\w*.*?```", save_code_block, html, flags=re.DOTALL)
+    html = re.sub(r"```[\w]*.*?```", save_code_block, html, flags=re.DOTALL)
 
-    # Inline code - also protect
+    # Protect inline code
     inline_codes = []
 
     def save_inline_code(m):
@@ -138,7 +138,6 @@ def md_to_html(md_content):
 
     # Headers (h1-h6) - strip {#id} custom anchor syntax
     for i in range(6, 0, -1):
-        pattern = "^" + "#" * i + r"\s+(.+)$"
 
         def make_header(level):
             def replacer(m):
@@ -148,29 +147,8 @@ def md_to_html(md_content):
 
             return replacer
 
+        pattern = "^" + "#" * i + r"\s+(.+)$"
         html = re.sub(pattern, make_header(i), html, flags=re.MULTILINE)
-
-    # Restore inline code
-    for i, code in enumerate(inline_codes):
-        html = html.replace(f"__INLINE_CODE_{i}__", code)
-
-    # Restore code blocks and convert to HTML
-    for i, code in enumerate(code_blocks):
-        if code.startswith("```") and len(code) > 3:
-            lang_match = re.match(r"```(\w+)", code)
-            if lang_match:
-                lang = lang_match.group(1)
-                content = code[3 + len(lang) : -3]
-                code_html = (
-                    f'<pre><code class="language-{lang}">{escape(content)}</code></pre>'
-                )
-            else:
-                content = code[3:-3]
-                code_html = f"<pre><code>{escape(content)}</code></pre>"
-        else:
-            content = code[3:-3] if code.startswith("```") else code
-            code_html = f"<pre><code>{escape(content)}</code></pre>"
-        html = html.replace(f"__CODE_BLOCK_{i}__", code_html)
 
     # Bold
     html = re.sub(r"\*\*(.+?)\*\*", r"<strong>\1</strong>", html)
@@ -198,17 +176,37 @@ def md_to_html(md_content):
     # Links [text](url)
     html = re.sub(r"\[([^\]]+)\]\(([^\)\s]+)\)", r'<a href="\2">\1</a>', html)
 
-    # Line breaks and paragraphs
+    # Line breaks and paragraphs - DO THIS BEFORE restoring code blocks
     paragraphs = re.split(r"\n\s*\n", html)
     result = []
     for p in paragraphs:
-        if p.strip():
-            if p.strip().startswith("<h") or p.strip().startswith("<pre>"):
-                result.append(p)
-            else:
-                p = p.replace("\n", "<br>")
-                result.append(f"<p>{p}</p>")
+        p = p.strip()
+        if not p:
+            continue
+        if p.startswith("<h") or p.startswith("__CODE_BLOCK_"):
+            result.append(p)
+        else:
+            p = p.replace("\n", "<br>")
+            result.append(f"<p>{p}</p>")
     html = "\n".join(result)
+
+    # Restore inline code
+    for i, code in enumerate(inline_codes):
+        html = html.replace(f"__INLINE_CODE_{i}__", code)
+
+    # Restore code blocks and convert to HTML
+    for i, code in enumerate(code_blocks):
+        lang_match = re.match(r"```(\w+)", code)
+        if lang_match:
+            lang = lang_match.group(1)
+            content = code[3 + len(lang) : -3]
+            code_html = (
+                f'<pre><code class="language-{lang}">{escape(content)}</code></pre>'
+            )
+        else:
+            content = code[3:-3]
+            code_html = f"<pre><code>{escape(content)}</code></pre>"
+        html = html.replace(f"__CODE_BLOCK_{i}__", code_html)
 
     return html
 
