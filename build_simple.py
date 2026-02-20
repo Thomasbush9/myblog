@@ -389,10 +389,7 @@ def generate_post_page(post, output_dir):
     toc_html = ""
     if post["frontmatter"].get("toc", False):
         headers = re.findall(r"<h([1-4])>([^<]+)</h\1>", html_content)
-        headers = [
-            (level, re.sub(r"\s*\{#[^}]+\}\s*$", "", text.strip()))
-            for level, text in headers
-        ]
+        headers = [(level, text.strip()) for level, text in headers]
         post_title = post["title"]
         headers = [h for h in headers if h[1].lower() != post_title.lower()]
         if headers:
@@ -409,18 +406,8 @@ def generate_post_page(post, output_dir):
             for level, text in headers:
                 anchor = re.sub(r"[^a-z0-9-]", "", text.lower().replace(" ", "-"))
                 html_content = re.sub(
-                    rf"<h{level}>([^<]*){re.escape(text)}([^<]*)</h{level}>",
-                    rf'<h{level} id="{anchor}">\1{text}\2</h{level}>',
-                    html_content,
-                    count=1,
-                )
-            toc_html = f"""<aside class="toc-container" data-location="{toc_location}"><div class="toc"><h2 class="toc-title">{toc_title}</h2><ul>{"".join(toc_items)}</ul></div></aside>"""
-            # Add anchors to headers
-            for level, text in headers:
-                anchor = re.sub(r"[^a-z0-9-]", "", text.lower().replace(" ", "-"))
-                html_content = re.sub(
-                    rf"<h{level}>([^<]*){re.escape(text)}([^<]*)</h{level}>",
-                    rf'<h{level} id="{anchor}">\1{text}\2</h{level}>',
+                    rf"<h{level}>{re.escape(text)}</h{level}>",
+                    rf'<h{level} id="{anchor}">{text}</h{level}>',
                     html_content,
                     count=1,
                 )

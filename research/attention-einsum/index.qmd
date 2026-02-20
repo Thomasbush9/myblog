@@ -171,7 +171,7 @@ In contrast, an RNN must compute each step sequentially, since the output at eac
 ![Attention vs RNNs](images/attention_rnn.png){fig-align='center'}
 
 
-## Additional Material {#Additional-Material}
+## Additional Material
 
 1. The original paper: [Attention is all you need](https://www.google.com/url?sa=t&source=web&rct=j&opi=89978449&url=https://arxiv.org/abs/1706.03762&ved=2ahUKEwioqvCC4t2OAxU9k4kEHfNSJl8QFnoECAgQAQ&usg=AOvVaw2ceXGQohV5Kx51VSkfkG08)
 2. To review vector similarities and dot product visit: [Vector Similarity Explained](https://www.pinecone.io/learn/vector-similarity/)
